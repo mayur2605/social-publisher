@@ -2,6 +2,12 @@
 
 A standalone creator workspace built with Next.js, TypeScript, Better Auth, PostgreSQL, and pg-boss. Source videos live in each creator's Google Drive. The app streams selected videos to YouTube, Instagram, Facebook, and TikTok and keeps durable, per-destination publishing state.
 
+## Product and delivery documentation
+
+Start with the [eight-phase lifecycle guide](docs/lifecycle/README.md): discovery, PRD, technical specification, implementation roadmap, validation, staging, launch, and production operations. It distinguishes implemented code and local test evidence from pending research, provider approvals, real-account testing, and deployment.
+
+The [feature specification](specs/001-social-publisher/spec.md), [implementation plan](specs/001-social-publisher/plan.md), [task register](specs/001-social-publisher/tasks.md), and [constitution](.specify/memory/constitution.md) provide Spec Kit-style planning artifacts. Specify CLI and agent workflow tooling have not been installed.
+
 ## Run locally
 
 Use Node.js 24 LTS and PostgreSQL 17 or newer.

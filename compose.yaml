@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: publisher
+      POSTGRES_PASSWORD: publisher
+      POSTGRES_DB: publisher
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U publisher -d publisher"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  migrate:
+    build: {context: ., target: migrate}
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://publisher:publisher@db:5432/publisher
+    depends_on:
+      db: {condition: service_healthy}
+  web:
+    build: {context: ., target: web}
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://publisher:publisher@db:5432/publisher
+      PORT: 3000
+    ports: ["3000:3000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  worker:
+    build: {context: ., target: worker}
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://publisher:publisher@db:5432/publisher
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+volumes:
+  postgres-data:

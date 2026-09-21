@@ -1,0 +1,19 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE IF NOT EXISTS connections (
+ id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+ platform text NOT NULL CHECK(platform IN ('drive','youtube','instagram','facebook','tiktok')), external_id text NOT NULL, label text NOT NULL,
+ token text NOT NULL, refresh_token text, expires_at timestamptz, status text NOT NULL DEFAULT 'connected', active boolean NOT NULL DEFAULT true,
+ metadata jsonb NOT NULL DEFAULT '{}', created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(user_id,platform,external_id));
+CREATE UNIQUE INDEX one_drive_per_user ON connections(user_id) WHERE platform='drive' AND status!='disconnected';
+CREATE TABLE oauth_states (id text PRIMARY KEY,user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,provider text NOT NULL,verifier text NOT NULL,expires_at timestamptz NOT NULL);
+CREATE TABLE media (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,connection_id uuid NOT NULL REFERENCES connections(id),drive_file_id text NOT NULL,name text NOT NULL,mime_type text NOT NULL,size bigint NOT NULL,checksum text NOT NULL,duration double precision NOT NULL,width integer NOT NULL,height integer NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(user_id,connection_id,drive_file_id,checksum));
+CREATE TABLE posts (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,media_id uuid NOT NULL REFERENCES media(id),caption text NOT NULL DEFAULT '',timezone text NOT NULL,scheduled_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE destinations (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,connection_id uuid NOT NULL REFERENCES connections(id),options jsonb NOT NULL DEFAULT '{}',status text NOT NULL DEFAULT 'draft',remote_id text,remote_url text,upload_state jsonb NOT NULL DEFAULT '{}',error text,attempts integer NOT NULL DEFAULT 0,next_attempt_at timestamptz NOT NULL DEFAULT now(),lease_until timestamptz,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now(),UNIQUE(post_id,connection_id));
+CREATE INDEX due_destinations ON destinations(status,next_attempt_at);
+CREATE TABLE subscriptions (user_id text PRIMARY KEY REFERENCES "user"(id) ON DELETE CASCADE,stripe_customer_id text UNIQUE,stripe_subscription_id text,plan text NOT NULL DEFAULT 'starter',status text NOT NULL DEFAULT 'incomplete',period_start timestamptz NOT NULL DEFAULT now(),period_end timestamptz NOT NULL DEFAULT now(),cancel_at_period_end boolean NOT NULL DEFAULT false,updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE usage (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,destination_id uuid NOT NULL UNIQUE REFERENCES destinations(id) ON DELETE CASCADE,period_start timestamptz NOT NULL,period_end timestamptz NOT NULL,status text NOT NULL CHECK(status IN ('reserved','consumed','released')));
+CREATE INDEX usage_period ON usage(user_id,period_start,status);
+CREATE TABLE billing_events (id text PRIMARY KEY,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE publish_attempts (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),destination_id uuid NOT NULL REFERENCES destinations(id) ON DELETE CASCADE,status text NOT NULL,detail text,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE worker_heartbeats (id text PRIMARY KEY,seen_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE upload_sessions (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,connection_id uuid NOT NULL REFERENCES connections(id),session_url text NOT NULL,created_at timestamptz NOT NULL DEFAULT now());

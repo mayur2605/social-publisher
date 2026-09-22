@@ -125,6 +125,13 @@ Progress can be committed with the work; do not repeatedly commit just to update
 
 ## 11. Recent progress
 
+### 2026-09-22 — Antigravity / Gemini — Local Development & Seed Session
+
+- Added `scripts/dev-session.ts` and `npm run dev:session` script to provision an offline local development session and sample workspace data in the local PostgreSQL database (`publisher`).
+- Updated local environment configuration in `.env.local` to enable workspace mode (`configured() === true`).
+- Restarted Next.js server on `http://localhost:3000` and verified stack health (`/api/health`) and protected workspace data loading (`/api/workspace`) with local test creator `Maya Creator (dev@socialpublisher.local)`.
+- Verified end-to-end browser test suite (`npm run test:e2e`: 8/8 tests passed).
+
 ### 2026-09-22 — Antigravity / Gemini — Security & Git Hygiene
 
 - Performed repository-wide git history audit across all 6 commits (`7265f91`..`6764dff`) for leaked secrets, API keys, credentials, tokens, and sensitive files. Confirmed zero credentials or sensitive values were ever committed to git history.

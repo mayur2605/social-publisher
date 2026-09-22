@@ -91,7 +91,12 @@ interface Data {
     period_end: string;
     cancel_at_period_end: boolean;
   } | null;
-  usage: { consumed: string; reserved: string };
+  usage: {
+    consumed: string;
+    reserved: string;
+    consumed_bytes?: string;
+    reserved_bytes?: string;
+  };
   capabilities: {
     drivePicker: boolean;
     billing: boolean;
@@ -484,6 +489,14 @@ function Overview({
               .length,
           ],
           ["Published", data.usage.consumed || 0],
+          [
+            "Bandwidth",
+            `${(
+              (Number(data.usage.consumed_bytes || 0) +
+                Number(data.usage.reserved_bytes || 0)) /
+              1024 ** 3
+            ).toFixed(1)} GB`,
+          ],
           [
             "Needs attention",
             targets.filter((d) =>
@@ -1836,8 +1849,14 @@ function Billing({ data }: { data: Data }) {
               {date(data.subscription.period_end)}
             </p>
             <p>
-              {data.usage.consumed} published · {data.usage.reserved} reserved
-              this period
+              {data.usage.consumed} published · {data.usage.reserved} reserved ·{" "}
+              {(
+                (Number(data.usage.consumed_bytes || 0) +
+                  Number(data.usage.reserved_bytes || 0)) /
+                1024 ** 3
+              ).toFixed(1)}{" "}
+              GB / {plans[data.subscription.plan].bandwidthBytes / 1024 ** 3} GB
+              bandwidth
             </p>
           </div>
           <Button variant="soft" disabled={!!busy} onClick={() => go()}>
@@ -1858,11 +1877,13 @@ function Billing({ data }: { data: Data }) {
             </div>
             <p>{p.accounts} connected social accounts</p>
             <p>{p.posts} destination posts per month</p>
+            <p>{p.bandwidthBytes / 1024 ** 3} GB monthly video bandwidth</p>
             <p>
               {p.maxVideoBytes > 2 * 1024 ** 3
                 ? "Up to 10 GB videos (YouTube & long-form)"
                 : "Up to 2 GB videos"}
             </p>
+            <p>Short-form videos up to 500 MB</p>
             <p>Your own Google Drive storage</p>
             <p>All four publishing platforms</p>
             <Button

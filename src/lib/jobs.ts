@@ -37,16 +37,31 @@ export async function reserve(userId: string, destinationId: string) {
       ])
     ).rows;
     if (existing && existing.status !== "released") return;
-    const used = Number(
-      (
-        await c.query(
-          "SELECT count(*) FROM usage WHERE user_id=$1 AND period_start=$2 AND status IN ('reserved','consumed')",
-          [userId, s.period_start],
-        )
-      ).rows[0].count,
-    );
-    if (used >= plans[s.plan as keyof typeof plans].posts)
+    const plan = plans[s.plan as keyof typeof plans];
+    const used = (
+      await c.query(
+        `SELECT count(*) AS used_posts, COALESCE(sum(m.size), 0) AS used_bytes
+         FROM usage u
+         JOIN destinations d ON d.id=u.destination_id
+         JOIN posts p ON p.id=d.post_id
+         JOIN media m ON m.id=p.media_id
+         WHERE u.user_id=$1 AND u.period_start=$2 AND u.status IN ('reserved','consumed')`,
+        [userId, s.period_start],
+      )
+    ).rows[0];
+    if (Number(used.used_posts) >= plan.posts)
       throw new AppError("Your monthly post allowance has been reached.");
+    const [destMedia] = (
+      await c.query(
+        "SELECT m.size FROM destinations d JOIN posts p ON p.id=d.post_id JOIN media m ON m.id=p.media_id WHERE d.id=$1",
+        [destinationId],
+      )
+    ).rows;
+    const candidateSize = Number(destMedia?.size || 0);
+    if (Number(used.used_bytes) + candidateSize > plan.bandwidthBytes)
+      throw new AppError(
+        `Your monthly video bandwidth allowance has been reached (${plan.bandwidthBytes / 1024 ** 3} GB on ${plan.name} plan).`,
+      );
     await c.query(
       `INSERT INTO usage(user_id,destination_id,period_start,period_end,status) VALUES($1,$2,$3,$4,'reserved') ON CONFLICT(destination_id) DO UPDATE SET status='reserved',period_start=EXCLUDED.period_start,period_end=EXCLUDED.period_end`,
       [userId, destinationId, s.period_start, s.period_end],

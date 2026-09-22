@@ -165,7 +165,17 @@ export async function handle(
             [userId],
           ),
           query(
-            "SELECT count(*) FILTER(WHERE u.status='consumed') AS consumed,count(*) FILTER(WHERE u.status='reserved') AS reserved FROM usage u JOIN subscriptions s ON s.user_id=u.user_id AND s.period_start=u.period_start WHERE u.user_id=$1",
+            `SELECT
+               count(*) FILTER(WHERE u.status='consumed') AS consumed,
+               count(*) FILTER(WHERE u.status='reserved') AS reserved,
+               COALESCE(sum(m.size) FILTER(WHERE u.status='consumed'), 0) AS consumed_bytes,
+               COALESCE(sum(m.size) FILTER(WHERE u.status='reserved'), 0) AS reserved_bytes
+             FROM usage u
+             JOIN subscriptions s ON s.user_id=u.user_id AND s.period_start=u.period_start
+             LEFT JOIN destinations d ON d.id=u.destination_id
+             LEFT JOIN posts p ON p.id=d.post_id
+             LEFT JOIN media m ON m.id=p.media_id
+             WHERE u.user_id=$1`,
             [userId],
           ),
         ]);

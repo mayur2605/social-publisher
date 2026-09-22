@@ -190,6 +190,17 @@ describe("real PostgreSQL and Better Auth integration", () => {
       ]),
     ).toHaveLength(1);
   });
+  it("enforces monthly bandwidth allowance and rejects over-quota reservations", async () => {
+    const u = await actor(),
+      f = await fixture(u.id);
+    await query("UPDATE media SET size=$1 WHERE id=$2", [
+      String(41 * 1024 ** 3),
+      f.media.id,
+    ]);
+    await expect(reserve(u.id, f.destination.id)).rejects.toThrow(
+      "monthly video bandwidth allowance has been reached",
+    );
+  });
   it("pauses a job after Drive disconnect and erases credentials", async () => {
     const u = await actor(),
       f = await fixture(u.id);

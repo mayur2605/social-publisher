@@ -71,7 +71,8 @@ export function validateMedia(
       errors.push("YouTube videos cannot exceed 12 hours.");
   }
   if (platform === "instagram") {
-    if (bytes > 1024 ** 3) errors.push("Instagram Reels must be at most 1 GB.");
+    if (bytes > 500 * 1024 * 1024)
+      errors.push("Instagram Reels must be at most 500 MB.");
     if (media.duration < 3 || media.duration > 900)
       errors.push("Instagram Reels must be between 3 seconds and 15 minutes.");
     if ((options.description ?? caption).length > 2200)
@@ -79,9 +80,9 @@ export function validateMedia(
   }
   if (platform === "facebook") {
     if (options.format === "reel") {
-      if (bytes > 1024 ** 3)
+      if (bytes > 500 * 1024 * 1024)
         errors.push(
-          "Facebook Reels must be at most 1 GB; choose Video for longer content.",
+          "Facebook Reels must be at most 500 MB; choose Video for longer content.",
         );
       if (media.duration < 3 || media.duration > 90)
         errors.push(
@@ -92,7 +93,8 @@ export function validateMedia(
     }
   }
   if (platform === "tiktok") {
-    if (bytes > 2 * 1024 ** 3) errors.push("TikTok accepts videos up to 2 GB.");
+    if (bytes > 500 * 1024 * 1024)
+      errors.push("TikTok videos must be at most 500 MB.");
     if (!options.consent) errors.push("Agree to TikTok’s posting terms.");
     if (!options.privacy) errors.push("Choose TikTok privacy.");
     if ((options.description ?? caption).length > 2200)

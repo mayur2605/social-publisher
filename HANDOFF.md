@@ -2,7 +2,7 @@
 
 **Read this first, regardless of agent or provider. Update it as work progresses.**
 
-Last checkpoint: **2026-09-22T02:09:08Z** · Maintainer for this checkpoint: **Codex / handoff setup**
+Last checkpoint: **2026-09-22T03:50:00Z** · Maintainer for this checkpoint: **Antigravity / Gemini**
 
 ## 1. Resume in one message
 
@@ -28,11 +28,11 @@ Build Social Publisher from the agreed creator workflow through verified product
 
 Individual creators; English; Next.js/TypeScript, PostgreSQL, Better Auth Google sign-in, separate Node/pg-boss worker, Railway deployment, Docker Compose locally. Better Auth replaces the previously proposed Auth.js; no existing user migration was identified.
 
-App identity stays separate from Drive and social grants. One Drive account; multiple eligible YouTube channels, Facebook Pages, Instagram professional accounts through the selected linked-Page flow, and TikTok accounts. Private Drive is the only persistent source-video store. Stream to official APIs; no permanent server video copy. MP4/MOV up to 2 GiB subject to stricter destination restrictions.
+App identity stays separate from Drive and social grants. One Drive account; multiple eligible YouTube channels, Facebook Pages, Instagram professional accounts through the selected linked-Page flow, and TikTok accounts. Private Drive is the only persistent source-video store. Stream to official APIs; no permanent server video copy. MP4/MOV up to 2 GiB (10 GiB on Studio) subject to stricter destination restrictions (500 MB for short-form Reels & TikTok).
 
 Preserve upload checkpoints and remote IDs. Do not duplicate confirmed successes or clear uncertain state to force publication. Signing out must not cancel schedules. User-selected timezone is retained while instants are stored in UTC.
 
-Monthly USD plans: Starter $9 / 4 accounts / 60 destination posts; Creator $19 / 10 / 200; Pro $39 / 25 / 600. One destination counts as one post. Reserve at dispatch, consume on publication, release on confirmed failure; retries reuse usage identity. Stripe is **test-only**; no free trial is offered. Live billing needs separate business eligibility and implementation review.
+Monthly USD plans: Starter $9 / 4 accounts / 60 destination posts / 40 GB data; Creator $19 / 10 / 200 / 120 GB data; Pro $39 / 25 / 600 / 300 GB data; Studio $79 / 50 / 1,500 / 750 GB data. One destination counts as one post. Reserve at dispatch, consume on publication, release on confirmed failure; retries reuse usage identity. Stripe is **test-only**; no free trial is offered. Live billing needs separate business eligibility and implementation review.
 
 Editing/transcoding, teams, AI generation, and engagement analytics remain outside release one. Documentation completion, Spec Kit installation, and mocked tests are not production acceptance.
 
@@ -54,7 +54,7 @@ Editing/transcoding, teams, AI generation, and engagement analytics remain outsi
 
 Auth/session protection, dedicated OAuth connections, encrypted integration tokens, Drive upload/import/private streaming, composer/drafts/calendar, durable publishing adapters/worker, destination recovery, test subscriptions/quotas, legal/setup pages, and deployment configuration are implemented. See T005–T012 for precise scope.
 
-Historical checks: **42 backend tests**, **8 desktop/mobile browser tests**, TypeScript and production build passed. Provider/Stripe protocols were mocked; Google sign-in and actual destination publishing were not verified. Docker Compose configuration parsed; container execution and Railway deployment remain unverified.
+Historical checks: **43 backend tests**, **8 desktop/mobile browser tests**, TypeScript and production build passed. Provider/Stripe protocols were mocked; Google sign-in and actual destination publishing were not verified. Docker Compose configuration parsed; container execution and Railway deployment remain unverified.
 
 Documentation audit verified 31 first-party Markdown files, 147 local links and 23 OpenAPI operations at that historical revision; counts change as documentation grows. OpenAPI had zero validation errors and four documented route-design warnings. An npm advisory query returned zero known advisories, not a security certification.
 
@@ -124,6 +124,14 @@ Each entry must contain:
 Progress can be committed with the work; do not repeatedly commit just to update a self-referencing SHA. Refer to code commits and use Git history for the handoff file's own revision. Pushed records are durable across providers; unsaved chat or uncommitted local diffs are not.
 
 ## 11. Recent progress
+
+### 2026-09-22 — Antigravity / Gemini — Bandwidth Safeguards & Margin Protection
+
+- Implemented 500 MB short-form caps in `src/lib/validation.ts` for Instagram Reels, Facebook Reels, and TikTok (protecting server egress from oversized vertical clips while preserving ample headroom for 4K 60fps clips).
+- Added monthly bandwidth allowance pools in `src/lib/plans.ts`: Starter 40 GB, Creator 120 GB, Pro 300 GB, Studio 750 GB, mathematically locking in minimum gross profit margins (50%–70%) even under 100% quota utilization.
+- Implemented cumulative byte usage tracking and reservation checks in `src/lib/jobs.ts` and `src/lib/api.ts` to block in-flight bandwidth overages before dispatch.
+- Updated `src/components/workspace.tsx` to render a live dual-meter (posts + bandwidth used) on the Overview desk and list monthly bandwidth allowances on pricing cards.
+- Verified all 43 backend tests (`npm test`), all 8 browser E2E tests (`npm run test:e2e`), TypeScript, ESLint, and Prettier.
 
 ### 2026-09-22 — Antigravity / Gemini — Studio Plan & 10 GB Large Video Support
 

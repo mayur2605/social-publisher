@@ -79,7 +79,7 @@ describe("video and authorization safeguards", () => {
         undefined,
         10 * 1024 ** 3,
       ).join(),
-    ).toContain("1 GB");
+    ).toContain("500 MB");
     expect(
       validateMedia(
         fiveGb,
@@ -89,7 +89,7 @@ describe("video and authorization safeguards", () => {
         undefined,
         10 * 1024 ** 3,
       ).join(),
-    ).toContain("2 GB");
+    ).toContain("500 MB");
     expect(
       validateMedia(
         { ...media, size: String(11 * 1024 ** 3) },

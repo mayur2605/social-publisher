@@ -1,4 +1,5 @@
 import { z, ZodError } from "zod";
+import { randomUUID, createHmac } from "node:crypto";
 import { getAuth } from "./auth";
 import { configured, appUrl } from "./env";
 import { query, tx } from "./db";
@@ -78,6 +79,35 @@ export async function handle(
       } catch {
         return reply({ database: false, worker: false }, 503);
       }
+    }
+    if (route === "dev-login" && request.method === "GET") {
+      if (process.env.ENABLE_DEV_LOGIN !== "true") {
+        throw new AppError("Not found.", 404);
+      }
+      const [u] = await query<{ id: string }>(
+        "SELECT id FROM \"user\" WHERE email='dev@socialpublisher.local'",
+      );
+      if (!u)
+        throw new AppError(
+          "Dev user not found. Run npm run dev:session first.",
+          404,
+        );
+      const token = randomUUID();
+      await query(
+        'INSERT INTO session(id,token,"userId","expiresAt","updatedAt") VALUES($1,$2,$3,now()+interval \'7 days\',now())',
+        [randomUUID(), token, u.id],
+      );
+      const signature = createHmac("sha256", process.env.BETTER_AUTH_SECRET!)
+        .update(token)
+        .digest("base64");
+      const cookieValue = `${token}.${signature}`;
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/",
+          "Set-Cookie": `better-auth.session_token=${encodeURIComponent(cookieValue)}; Path=/; Max-Age=604800; SameSite=Lax`,
+        },
+      });
     }
     if (
       path[0] === "media" &&

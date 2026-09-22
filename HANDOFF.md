@@ -128,6 +128,7 @@ Progress can be committed with the work; do not repeatedly commit just to update
 ### 2026-09-22 — Antigravity / Gemini — Local Development & Seed Session
 
 - Added `scripts/dev-session.ts` and `npm run dev:session` script to provision an offline local development session and sample workspace data in the local PostgreSQL database (`publisher`).
+- Added development-only auto-login route `GET /api/dev-login` (guarded by `ENABLE_DEV_LOGIN=true` in `.env.local`) enabling seamless one-click browser login without manual DevTools console or cookie manipulation.
 - Updated local environment configuration in `.env.local` to enable workspace mode (`configured() === true`).
 - Restarted Next.js server on `http://localhost:3000` and verified stack health (`/api/health`) and protected workspace data loading (`/api/workspace`) with local test creator `Maya Creator (dev@socialpublisher.local)`.
 - Verified end-to-end browser test suite (`npm run test:e2e`: 8/8 tests passed).

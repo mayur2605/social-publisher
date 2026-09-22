@@ -27,10 +27,44 @@ Logs intentionally exclude tokens, request bodies, upload URLs, and signed strea
 - **Repeated provider outage:** up to twelve automatic retries use exponential backoff, capped at thirty minutes. Consecutive failures are tracked separately from upload chunks and status polls; a successful adapter step resets this budget. Duplicate queue deliveries respect the saved retry time. Exhaustion requires attention and retains any uncertain quota reservation. Explicit retry resets the error budget.
 - **Lost TikTok chunk acknowledgement:** the platform publish status is checked; an unresolved partial upload is held for attention, since blind chunk replay is unsafe.
 
+## Service inspection & container commands
+
+### Coolify / Docker Compose (Primary Hetzner Stack)
+
+Inspect live container logs and restart failed workers without interrupting the web app:
+
+```bash
+# View real-time logs for the background publisher worker
+docker compose -f docker-compose.prod.yml logs -f worker
+
+# View web server logs
+docker compose -f docker-compose.prod.yml logs -f web
+
+# Restart the worker process (pg-boss reconnects and discovers pending jobs)
+docker compose -f docker-compose.prod.yml restart worker
+
+# Manual database backup
+docker exec -t social-publisher-db pg_dump -U postgres publisher > backup_$(date +%Y%m%d).sql
+
+# Monitor host network throughput against the 20 TB monthly limit
+vnstat -m
+```
+
+### Railway (Managed PaaS Alternative)
+
+```bash
+# View service logs via Railway CLI
+railway logs --service worker
+railway logs --service web
+
+# Restart worker service
+railway restart --service worker
+```
+
 ## Maintenance
 
-Apply reviewed numbered migrations before deploying dependent code. Rotate tokens through reconnect flows; rotate app encryption keys only with a migration. Prune expired OAuth state and obsolete encrypted upload-session records periodically. Configure pg-boss retention according to operating needs. Keep database backups private and set documented retention. Monitor Stripe dashboard webhook delivery and replay failed events after fixing configuration.
+Apply reviewed numbered migrations before deploying dependent code. Rotate tokens through reconnect flows; rotate app encryption keys only with a migration. Prune expired OAuth state and obsolete encrypted upload-session records periodically. Configure pg-boss retention according to operating needs. Keep database backups private (automated daily snapshots to Cloudflare R2 / AWS S3 on Coolify, or Railway automated backups) and set documented retention. Monitor Stripe dashboard webhook delivery and replay failed events after fixing configuration. Monitor VPS egress metrics in Hetzner Cloud Console to ensure bandwidth stays within the 20 TB tier allowance.
 
 ## Supporting controls
 
-Use the [production operating model](lifecycle/08-production-operations.md) for ownership and cadence, the [threat model](security/threat-model.md) for remaining assurance, and the [policy decisions](release/policy-decisions.md) for retention scope. No external alerts or cleanup schedules are created by these documents.
+Use the [production operating model](lifecycle/08-production-operations.md) for ownership and cadence, the [Hetzner + Coolify runbook](deployment-hetzner-coolify.md) and [Railway deployment guide](deployment.md) for deployment steps, the [threat model](security/threat-model.md) for remaining assurance, and the [policy decisions](release/policy-decisions.md) for retention scope. No external alerts or cleanup schedules are created by these documents.

@@ -4,7 +4,7 @@ Version 1.0 · 2026-09-22 · Owner: engineering · Baseline: `7265f91`
 
 ## Architecture and trust boundaries
 
-Next.js/TypeScript serves the UI, Better Auth routes, and owner-scoped application API. PostgreSQL stores identity/session data, encrypted grants, media metadata, posts, per-destination state, billing, and usage. A separate Node.js pg-boss worker performs publishing independently of browser sessions. Railway is the selected deployment target; Docker Compose is provided locally.
+Next.js/TypeScript serves the UI, Better Auth routes, and owner-scoped application API. PostgreSQL stores identity/session data, encrypted grants, media metadata, posts, per-destination state, billing, and usage. A separate Node.js pg-boss worker performs publishing independently of browser sessions. Hetzner Cloud VPS + Coolify is the primary production deployment target (using `docker-compose.prod.yml` with 20 TB free monthly video bandwidth); Railway is supported as an alternative managed PaaS (`railway.web.toml` and `railway.worker.toml`); Docker Compose is provided locally (`compose.yaml`).
 
 ```mermaid
 flowchart LR
@@ -108,12 +108,12 @@ Transient errors have up to twelve automatic retries with exponential backoff ca
 
 Source requests check Drive ID-associated metadata, size, and checksum; changed/inaccessible files fail visibly. Signed Meta source links last 24 hours and are checked against destination/connection state. OAuth tokens and upload session secrets are encrypted with AES-256-GCM; the configured 32-byte key also signs streaming capabilities. Key rotation needs ciphertext migration and invalidation planning.
 
-Quota reservation locks the subscription row. A unique usage destination prevents double charging. Stripe events are signed, deduplicated transactionally, and reconciled against current subscription state. Test keys/events only are accepted. Expired entitlement prevents dispatch. Inspect in-flight reconciliation at subscription expiry as a hardening item: current reservation checks run on each worker pass.
+Quota reservation locks the subscription row. A unique usage destination prevents double charging. Dual quotas enforce both monthly post limits and monthly bandwidth pools (Starter 40 GB, Creator 120 GB, Pro 300 GB, Studio 750 GB) alongside 500 MB short-form vertical video caps. Stripe events are signed, deduplicated transactionally, and reconciled against current subscription state. Test keys/events only are accepted. Expired entitlement prevents dispatch. Inspect in-flight reconciliation at subscription expiry as a hardening item: current reservation checks run on each worker pass.
 
 ## Known engineering work before acceptance
 
 - Verify protected-page session handling and all future server actions against FR-01/NFR-01.
-- Measure 2 GiB transfer throughput: one chunk per worker pass plus scheduling delays may be too slow; optimize only with recovery tests.
+- Measure large transfer throughput (2 GiB on Starter/Creator/Pro, 10 GiB on Studio): one chunk per worker pass plus scheduling delays may be too slow; optimize only with recovery tests.
 - Test subscription expiry/downgrade while a remote operation is processing; ensure reconciliation and reservation settlement remain possible without starting unauthorized new posts.
 - Test actual worker termination, source revisions, token revocation, provider host responses, and byte-range behavior.
 - Validate concurrent first deployment/migrations, database restore, and production pool capacity.

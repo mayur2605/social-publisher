@@ -4,7 +4,7 @@ Feature: [001-social-publisher](spec.md) · Date: 2026-09-22
 
 ## Technical context
 
-Use the existing Next.js/TypeScript/React application, Better Auth and PostgreSQL identity/session storage, dedicated encrypted OAuth grants, Node/pg-boss worker, official social APIs, Drive private sources, and Stripe test subscriptions. Deploy separate Railway web/worker/PostgreSQL services. No durable server video store or Redis is required by the chosen design.
+Use the existing Next.js/TypeScript/React application, Better Auth and PostgreSQL identity/session storage, dedicated encrypted OAuth grants, Node/pg-boss worker, official social APIs, Drive private sources, and Stripe test subscriptions. Deploy production services via Hetzner Cloud VPS + Coolify (`docker-compose.prod.yml`) or Railway (`railway.web.toml`, `railway.worker.toml`) with PostgreSQL. No durable server video store or Redis is required by the chosen design.
 
 The authoritative architecture, database model, API contracts, state machine, and known gaps are in [technical specification](../../docs/lifecycle/03-technical-specification.md). This plan does not propose replacing the implemented stack or regenerating the repository.
 
@@ -35,7 +35,7 @@ Detailed dependencies and exits are in the [roadmap](../../docs/lifecycle/04-imp
 
 ## Code and verification map
 
-Identity: `src/lib/auth.ts`, auth route, API, page shell. Connections/source: `connections.ts`, `drive.ts`, `crypto.ts`. Publishing: `validation.ts`, `publishers.ts`, `jobs.ts`. Billing: `billing.ts`, `plans.ts`. UX: `workspace.tsx` and application routes. Deployment: Dockerfiles, Compose, Railway TOML and `scripts/migrate.ts`.
+Identity: `src/lib/auth.ts`, auth route, API, page shell. Connections/source: `connections.ts`, `drive.ts`, `crypto.ts`. Publishing: `validation.ts`, `publishers.ts`, `jobs.ts`. Billing: `billing.ts`, `plans.ts`. UX: `workspace.tsx` and application routes. Deployment: Dockerfiles, Compose (`compose.yaml`, `docker-compose.prod.yml`), Railway TOML and `scripts/migrate.ts`.
 
 Use `tests/security.test.ts` for pure security/validation behavior; `integration.test.ts` for DB/session/concurrency; `platforms.test.ts` for protocol/checkpoint behavior; `billing.test.ts` for Stripe events/checkout; browser tests for workflows and viewport regressions. Add missing targeted tests alongside fixes, then capture external evidence under the validation plan. Do not reset staging with automated-test fixtures.
 
@@ -45,7 +45,7 @@ Baseline migrations are 000–003. New schema changes use new numbered files wit
 
 ## Open dependencies
 
-Provider credentials/test accounts, actual approval scopes, Railway access/domain, business identity/location, support coverage, retention policy, measured capacity, and payment eligibility are unresolved. They are not code placeholders: their owners and release consequences are tracked in the lifecycle roadmap and launch gate.
+Provider credentials/test accounts, actual approval scopes, Hetzner/Coolify or Railway access/domain, business identity/location, support coverage, retention policy, measured capacity, and payment eligibility are unresolved. They are not code placeholders: their owners and release consequences are tracked in the lifecycle roadmap and launch gate.
 
 ## Supporting artifacts after documentation review
 

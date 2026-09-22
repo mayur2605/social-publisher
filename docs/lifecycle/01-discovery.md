@@ -34,19 +34,19 @@ Interview prompts: How did you publish your last video? Which steps repeated? Wh
 
 ## Commercial baseline
 
-Monthly USD plans are Starter $9 / 4 social accounts / 60 destination posts; Creator $19 / 10 / 200; Pro $39 / 25 / 600. One video sent to four accounts consumes four posts on confirmed publication. There is no free trial in the product offer. Prices are agreed defaults, not evidence of profitability or willingness to pay.
+Monthly USD plans are Starter $9 / 4 social accounts / 60 destination posts / 40 GB monthly bandwidth pool; Creator $19 / 10 / 200 / 120 GB bandwidth pool; Pro $39 / 25 / 600 / 300 GB bandwidth pool; Studio $79 / 50 / 1,500 / 750 GB bandwidth pool (supporting up to 10 GB video uploads for YouTube & Facebook Video). Short-form vertical formats (Instagram Reels, Facebook Reels, TikTok) enforce a 500 MB limit to guarantee 50%–70% minimum gross margins. One video sent to four accounts consumes four posts on confirmed publication. There is no free trial in the product offer. Prices are agreed defaults, not evidence of profitability or willingness to pay.
 
-Estimate contribution per subscriber as collected revenue minus payment costs, allocated compute/database/network costs, support costs, and other variable costs. Measure streaming amplification: one Drive source may be downloaded separately per destination and fetched more than once by a provider. Choose any fair-use policy only after measuring and disclosing it.
+Estimate contribution per subscriber as collected revenue minus payment costs, allocated compute/database/network costs, support costs, and other variable costs. Measure streaming amplification: one Drive source may be downloaded separately per destination and fetched more than once by a provider. Outbound egress cost is minimized by running on Hetzner Cloud VPS (20,000 GB / 20 TB free monthly egress bandwidth).
 
 ## Risks and decisions
 
-| Risk or unknown                                      | Consequence                                          | Next action / responsible role                                  |
-| ---------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
-| Provider approval and background-posting eligibility | Some workflows may not be available to outside users | Engineering and product: validate each approved use case        |
-| Business location and merchant eligibility           | Live subscriptions cannot launch                     | Product owner: establish entity/location and review eligibility |
-| Reliance on private Drive originals                  | Deletion, changes, or revoked grants stop jobs       | Engineering: prove attention/reconnect flows with real accounts |
-| Long-video transfer cost and delay                   | Plan margin and scheduling experience may degrade    | Engineering: run full-size staging measurements                 |
-| High consent/setup friction                          | Users abandon before first publish                   | Product: observe pilot onboarding                               |
+| Risk or unknown                                      | Consequence                                          | Next action / responsible role                                                                                    |
+| ---------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Provider approval and background-posting eligibility | Some workflows may not be available to outside users | Engineering and product: validate each approved use case                                                          |
+| Business location and merchant eligibility           | Live subscriptions cannot launch                     | Product owner: establish entity/location and review eligibility                                                   |
+| Reliance on private Drive originals                  | Deletion, changes, or revoked grants stop jobs       | Engineering: prove attention/reconnect flows with real accounts                                                   |
+| Long-video transfer cost and delay                   | Plan margin and scheduling experience may degrade    | Mitigated by 500 MB short-form caps, monthly bandwidth pools, and 20 TB included free egress on Hetzner Cloud VPS |
+| High consent/setup friction                          | Users abandon before first publish                   | Product: observe pilot onboarding                                                                                 |
 
 ## Phase exit
 

@@ -4,7 +4,7 @@ Version 1.0 · 2026-09-22 · Owner: QA with engineering
 
 ## Evidence baseline
 
-[Verification record](../verification.md) reports 42 unit/PostgreSQL backend tests, 8 desktop/mobile browser tests, TypeScript, and the production build passing locally. The backend tests use real PostgreSQL and Better Auth sessions; provider and Stripe responses are mocked. Browser tests create test-only sessions. Actual Google login, provider publication, Stripe-hosted checkout, container execution, and Railway deployment are not proven by those results.
+[Verification record](../verification.md) reports 43 unit/PostgreSQL backend tests, 8 desktop/mobile browser tests, TypeScript, and the production build passing locally. The backend tests use real PostgreSQL and Better Auth sessions; provider and Stripe responses are mocked. Browser tests create test-only sessions. Actual Google login, provider publication, Stripe-hosted checkout, container execution, and production deployment are not proven by those results.
 
 No tests were rerun merely to write this documentation. Use the recorded baseline as historical evidence, then rerun the appropriate checks for each candidate commit.
 
@@ -29,7 +29,7 @@ Record candidate SHA, environment, operator, timestamp, test IDs, input metadata
 | V-09    | FR-01–FR-05          | Real Google identity, Drive upload/import and another Google/YouTube identity                                                                                | Pending developer credentials and accounts                                                         |
 | V-10    | FR-06–FR-07          | Real scheduled publication to each advertised platform; private source and correct metadata/settings                                                         | Pending developer credentials, authorized accounts, and applicable permissions                     |
 | V-11    | FR-08–FR-10          | Real Stripe test checkout/portal, signed delivery, renewal failure/recovery, cancellation, downgrade                                                         | Pending Stripe test setup                                                                          |
-| V-12    | NFR-05–NFR-06        | Containers, Railway, alert delivery, restore, rollback, capacity, and cost                                                                                   | Compose configuration parsed; execution and production-like evidence pending                       |
+| V-12    | NFR-05–NFR-06        | Containers, Hetzner + Coolify / Railway, alert delivery, restore, rollback, capacity, and cost                                                               | Compose configuration parsed; execution and production-like evidence pending                       |
 
 ## Reproducible local checks
 

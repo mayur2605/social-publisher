@@ -59,7 +59,7 @@ See [docs/provider-setup.md](docs/provider-setup.md) for callbacks, scopes, revi
 
 The user explicitly selects the video, destinations, settings, and publishing time. The app uses official APIs only. Public TikTok and YouTube visibility is disabled until their approval flags are enabled. Instagram uses Meta's Facebook Login path and requires a linked Facebook Page. Facebook personal profiles are unsupported.
 
-Videos must be MP4/MOV, at most 2 GiB, and satisfy each destination's additional restrictions. Drive supplies duration and dimensions after processing. Provider APIs perform final codec/encoding acceptance; the app does not transcode. The Facebook Reel path conservatively accepts 3–90 seconds; use its Video format for longer uploads. Keep API constraints up to date as platform versions change.
+Videos must be MP4/MOV, up to 2 GiB on Starter/Creator/Pro and up to 10 GiB on Studio (for YouTube and Facebook Video; short-form Instagram Reels, Facebook Reels, and TikTok are capped at 500 MB to protect cloud egress margins), and satisfy each destination's additional restrictions. Drive supplies duration and dimensions after processing. Provider APIs perform final codec/encoding acceptance; the app does not transcode. The Facebook Reel path conservatively accepts 3–90 seconds; use its Video format for longer uploads. Keep API constraints up to date as platform versions change.
 
 ## Scheduling and recovery
 
@@ -77,11 +77,13 @@ Sources are checked against Drive file ID, size, and checksum. Meta fetches a si
 
 Stripe **test mode only** is enforced in server code, including webhook rejection of live events.
 
-- Starter: $9/month, 4 active social accounts, 60 destination posts.
-- Creator: $19/month, 10 accounts, 200 posts.
-- Pro: $39/month, 25 accounts, 600 posts.
+- Starter: $9/month, 4 active social accounts, 60 destination posts, 40 GB monthly bandwidth pool, videos up to 2 GB.
+- Creator: $19/month, 10 accounts, 200 posts, 120 GB monthly bandwidth pool, videos up to 2 GB.
+- Pro: $39/month, 25 accounts, 600 posts, 300 GB monthly bandwidth pool, videos up to 2 GB.
+- Studio: $79/month, 50 accounts, 1,500 posts, 750 GB monthly bandwidth pool, videos up to 10 GB (YouTube & Facebook Video).
+- All plans enforce a 500 MB cap on short-form vertical formats (Instagram Reels, Facebook Reels, TikTok) to guarantee 50%–70% minimum gross margins.
 
-Drive does not count toward the social-account limit. Allowance is reserved atomically at dispatch, consumed on confirmed publication, and released on confirmed failure or cancellation before dispatch. The same destination is never counted twice. Suspended jobs with uncertain external effects retain their reservation. A new subscription period does not retroactively move a previous reservation.
+Drive does not count toward the social-account limit. Allowance is reserved atomically at dispatch, consumed on confirmed publication, and released on confirmed failure or cancellation before dispatch. Both destination count and cumulative monthly bandwidth are enforced. The same destination is never counted twice. Suspended jobs with uncertain external effects retain their reservation. A new subscription period does not retroactively move a previous reservation.
 
 Webhook signatures are verified and events deduplicated in the same transaction as entitlement updates. Current Stripe state is fetched for updates to handle out-of-order events. Expired/past-due subscriptions block publishing. Cancellation at period end preserves access until then. Downgrades retain connection records but require selecting active accounts within the new limit.
 
@@ -107,7 +109,12 @@ Set the database URL appropriate to your local PostgreSQL user/port. By default 
 
 ## Deployment
 
-See [docs/deployment.md](docs/deployment.md). Railway uses one public web service, one always-on worker, and PostgreSQL. No bucket or Redis service is required. Hosting, database, and network-transfer costs still apply.
+See [docs/deployment.md](docs/deployment.md) for deployment options:
+
+- **Hetzner Cloud VPS + Coolify (Recommended)**: Runs via [docker-compose.prod.yml](docker-compose.prod.yml) on a €6–€8/mo VPS with 20,000 GB (20 TB) free monthly outbound video egress. See [docs/deployment-hetzner-coolify.md](docs/deployment-hetzner-coolify.md).
+- **Railway (Alternative)**: Uses `railway.web.toml` and `railway.worker.toml` for a fully managed PaaS.
+
+Both run one public web service, one always-on worker, and PostgreSQL. No bucket or Redis service is required.
 
 ## Operations
 

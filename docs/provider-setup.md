@@ -38,7 +38,7 @@ Replace `https://publisher.example.com` with `BETTER_AUTH_URL`. Keep callback UR
 
 ## Stripe test mode
 
-1. Create three recurring monthly USD prices: 900, 1900, and 3900 cents. Put the IDs in the matching environment variables.
+1. Create four recurring monthly USD prices: 900 (Starter), 1900 (Creator), 3900 (Pro), and 7900 (Studio) cents. Put the IDs in the matching environment variables (`STRIPE_PRICE_ID_STARTER`, `STRIPE_PRICE_ID_CREATOR`, `STRIPE_PRICE_ID_PRO`, `STRIPE_PRICE_ID_STUDIO`).
 2. Register `https://publisher.example.com/api/billing/webhook` for `customer.subscription.created`, `.updated`, and `.deleted`. Copy that endpoint's signing secret.
 3. Configure the billing portal with those products, invoices/payment-method management, subscription cancellation at period end, immediate upgrades with proration, and downgrades at period end. Set the return URL to `/billing`.
 4. Complete a test checkout, replay webhook events, simulate renewal failure/recovery, and verify cancellation and downgrade entitlements.

@@ -6,16 +6,16 @@ The app has pre-launch [privacy](../../src/app/privacy/page.tsx), [terms](../../
 
 ## Open decisions
 
-| ID     | Decision / evidence needed                                                                | Current state                                                     | Action owner                    |
-| ------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------- |
-| POL-01 | Operator legal name, location, contact/address as applicable, support email               | Undecided/unconfigured                                            | Product owner                   |
-| POL-02 | Launch regions, eligible customers, age/account requirements, applicable legal/tax review | Not established                                                   | Product with qualified advisers |
-| POL-03 | Hosting region and actual subprocessors, processing locations, provider contracts         | Railway planned; production configuration not established         | Operations/product              |
-| POL-04 | Per-category retention, backup lifetime, deletion completion and exceptions               | No approved durations; no general pruning job evidenced           | Product/legal/engineering       |
-| POL-05 | Rights/support request intake, identity verification, escalation, response commitments    | No staffed contact/process confirmed                              | Support/product                 |
-| POL-06 | Billing mode, refund/cancellation terms, tax handling and merchant eligibility            | Test-only; live blocked; no real-payment policy accepted          | Product/legal                   |
-| POL-07 | Required cookies and any optional measurement, consent/disclosure choices                 | Better Auth sessions implemented; proposed metrics not deployed   | Engineering/product/legal       |
-| POL-08 | Google Limited Use and other provider policy obligations against actual data use          | Existing policy statement; app-specific compliance review pending | Product/engineering             |
+| ID     | Decision / evidence needed                                                                | Current state                                                                                             | Action owner                    |
+| ------ | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| POL-01 | Operator legal name, location, contact/address as applicable, support email               | Undecided/unconfigured                                                                                    | Product owner                   |
+| POL-02 | Launch regions, eligible customers, age/account requirements, applicable legal/tax review | Not established                                                                                           | Product with qualified advisers |
+| POL-03 | Hosting region and actual subprocessors, processing locations, provider contracts         | Hetzner Cloud VPS (EU or US) + Coolify planned (Railway alternative); production configuration documented | Operations/product              |
+| POL-04 | Per-category retention, backup lifetime, deletion completion and exceptions               | No approved durations; no general pruning job evidenced                                                   | Product/legal/engineering       |
+| POL-05 | Rights/support request intake, identity verification, escalation, response commitments    | No staffed contact/process confirmed                                                                      | Support/product                 |
+| POL-06 | Billing mode, refund/cancellation terms, tax handling and merchant eligibility            | Test-only; live blocked; no real-payment policy accepted                                                  | Product/legal                   |
+| POL-07 | Required cookies and any optional measurement, consent/disclosure choices                 | Better Auth sessions implemented; proposed metrics not deployed                                           | Engineering/product/legal       |
+| POL-08 | Google Limited Use and other provider policy obligations against actual data use          | Existing policy statement; app-specific compliance review pending                                         | Product/engineering             |
 
 ## Data inventory and implementation review
 

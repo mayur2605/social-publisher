@@ -36,9 +36,9 @@ Requirements: FR-06–FR-07, NFR-03, NFR-05. Validation: V-05, V-06, V-10.
 
 ### US4 · P1 · Pay and use allowance correctly
 
-As a creator, I choose a plan and manage billing while understanding account and destination-post limits.
+As a creator, I choose a plan and manage billing while understanding account, destination-post, and monthly bandwidth pool limits.
 
-Given one remaining slot, concurrent dispatch reserves at most one new destination. Given a retry, its usage is not counted twice. Given period-end cancellation, access continues to the paid endpoint. Given downgrade, saved connections remain and active accounts must fit the new cap.
+Given one remaining slot or available bandwidth pool, concurrent dispatch reserves at most one new destination. Given a retry, its usage is not counted twice. Given period-end cancellation, access continues to the paid endpoint. Given downgrade, saved connections remain and active accounts must fit the new cap.
 
 Requirements: FR-08–FR-10. Validation: V-07, V-11. The current deliverable uses Stripe test mode only.
 
@@ -52,6 +52,6 @@ Requirements: FR-03, FR-11–FR-12, NFR-06. Validation: V-02, V-08, V-12. Lower 
 
 ## Edge cases and acceptance boundary
 
-Include expired consent, full Drive storage, missing metadata, 2 GiB limit, provider-specific durations, DST transitions, token refresh races, worker death, lost acknowledgements, revoked grants, partial success, duplicate callbacks/webhooks, quota contention, in-flight subscription expiry, and database restore after remote acceptance. See the [validation plan](../../docs/lifecycle/05-validation.md) for exact evidence requirements.
+Include expired consent, full Drive storage, missing metadata, 2 GiB / 10 GiB limits, 500 MB short-form caps on Reels/TikTok, monthly bandwidth pool exhaustion, provider-specific durations, DST transitions, token refresh races, worker death, lost acknowledgements, revoked grants, partial success, duplicate callbacks/webhooks, quota contention, in-flight subscription expiry, and database restore after remote acceptance. See the [validation plan](../../docs/lifecycle/05-validation.md) for exact evidence requirements.
 
 Feature success requires the linked acceptance matrix and release gates to pass. Current local test counts are evidence of a subset, not full acceptance. Provider approval, operator details, live billing, capacity, and recovery policies remain open as tracked in [tasks](tasks.md).

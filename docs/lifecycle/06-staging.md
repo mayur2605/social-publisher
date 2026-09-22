@@ -4,9 +4,9 @@ Version 1.0 · 2026-09-22 · Owner: operations with engineering
 
 ## Purpose and current state
 
-Create an isolated, production-like environment to prove the release candidate before opening registration. Railway web/worker configuration, Dockerfiles, Compose, migrations, and `/api/health` exist. Local standalone web and pg-boss worker were exercised; Docker image execution and Railway deployment remain unverified. The last Railway access check was unauthorized.
+Create an isolated, production-like environment to prove the release candidate before opening registration. Production Docker Compose configuration (`docker-compose.prod.yml`) for Hetzner + Coolify, Railway configuration (`railway.web.toml`, `railway.worker.toml`), Dockerfiles, migrations, and `/api/health` exist. Local standalone web and pg-boss worker were exercised; containerized production deployment and restore rehearsal remain to be signed off on staging.
 
-This document defines acceptance. Follow [deployment.md](../deployment.md) for the concrete Railway service setup and [provider-setup.md](../provider-setup.md) for callbacks/scopes.
+This document defines acceptance. Follow [deployment-hetzner-coolify.md](../deployment-hetzner-coolify.md) for Hetzner Cloud VPS + Coolify (recommended) and [deployment.md](../deployment.md) for Railway, alongside [provider-setup.md](../provider-setup.md) for callbacks/scopes.
 
 ## Environment separation
 
@@ -17,11 +17,11 @@ This document defines acceptance. Follow [deployment.md](../deployment.md) for t
 | Staging           | Separate PostgreSQL, encryption/auth keys, provider clients where supported, Stripe test prices | Invited test users only; real integration validation |
 | Production        | Separate database/secrets, approved provider grants, reviewed billing mode                      | Public service only after phase 7 gates              |
 
-Use Railway's private database connectivity. Expose only the HTTPS web service. Do not expose PostgreSQL or the worker publicly. Keep the worker always on. Restrict staging through provider test-user controls and deployment access controls suitable for OAuth callbacks; test those controls rather than assuming a hidden URL is protection.
+Use private database connectivity (internal Docker bridge network in Coolify or Railway's private network). Expose only the HTTPS web service (port 3000 via reverse proxy). Do not expose PostgreSQL or the worker publicly. Keep the worker always on. Restrict staging through provider test-user controls and deployment access controls suitable for OAuth callbacks; test those controls rather than assuming a hidden URL is protection.
 
 ## Prerequisites
 
-- [ ] Product owner grants Railway project access and chooses a staging domain.
+- [ ] Product owner grants Hetzner/Coolify or Railway project access and chooses a staging domain.
 - [ ] Engineering records release candidate SHA and reviewed migrations.
 - [ ] Provider apps, authorized test accounts, and exact HTTPS callbacks are configured.
 - [ ] Secrets from `.env.example` are provisioned without sharing `.env.local` through Git.
@@ -33,7 +33,7 @@ Web and worker share database, encryption key, app URL, and appropriate provider
 ## Deployment sequence
 
 1. Build and run the web/worker images locally or in CI with a test database. Verify image startup, static assets, and process signals. Configuration parsing alone does not satisfy this step.
-2. Provision PostgreSQL, worker, and web services; select their respective Railway config files. Ensure the worker uses `Dockerfile.worker` and its migration pre-deploy command.
+2. Provision PostgreSQL, worker, and web services (using `docker-compose.prod.yml` in Coolify or respective Railway config files). Ensure migrations execute before the web service handles live traffic.
 3. Back up the target database. Review migration order and compatibility with the currently deployed code; test concurrent startup on an empty database before relying on multiple deployers.
 4. Deploy worker/migrations, then web. Set the exact public origin and verify registered callbacks. Never send live traffic to code that expects a missing schema.
 5. Confirm service logs are free of secrets, both services use the intended database, and `/api/health` reports both components healthy. This endpoint is stack health; do not make initial web readiness depend on a worker that has not started yet.

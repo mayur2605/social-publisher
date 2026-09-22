@@ -10,7 +10,7 @@ These eight documents describe the agreed product, the existing implementation, 
 | 2     | [Product requirements document (PRD)](02-prd.md)         | Agreed scope documented; acceptance partly verified locally              |
 | 3     | [Technical specification](03-technical-specification.md) | Architecture implemented; production behavior still needs validation     |
 | 4     | [Implementation roadmap](04-implementation-roadmap.md)   | Local implementation available; hardening and external setup open        |
-| 5     | [Validation and acceptance](05-validation.md)            | 42 backend and 8 browser tests previously passed; external tests pending |
+| 5     | [Validation and acceptance](05-validation.md)            | 43 backend and 8 browser tests previously passed; external tests pending |
 | 6     | [Staging and deployment](06-staging.md)                  | Configuration prepared; deployment and restore rehearsal pending         |
 | 7     | [Launch and release](07-launch.md)                       | Public launch blocked on the listed release gates                        |
 | 8     | [Production operations](08-production-operations.md)     | Operating procedures defined; production service not established         |
@@ -33,7 +33,7 @@ For future changes: describe the user outcome and acceptance first; update the t
 
 - [Local setup and configuration](../../README.md)
 - [Provider app registration and callbacks](../provider-setup.md)
-- [Railway deployment procedure](../deployment.md)
+- [Production deployment procedures (Hetzner + Coolify & Railway)](../deployment.md)
 - [Operational diagnostics and recovery](../operations.md)
 - [Recorded verification results and limitations](../verification.md)
 

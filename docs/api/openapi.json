@@ -1629,7 +1629,7 @@
                 "properties": {
                   "plan": {
                     "type": "string",
-                    "enum": ["starter", "creator", "pro"]
+                    "enum": ["starter", "creator", "pro", "studio"]
                   }
                 },
                 "required": ["plan"]
@@ -2124,7 +2124,7 @@
         "properties": {
           "plan": {
             "type": "string",
-            "enum": ["starter", "creator", "pro"]
+            "enum": ["starter", "creator", "pro", "studio"]
           },
           "status": {
             "type": "string"
@@ -2371,6 +2371,14 @@
                     "pattern": "^[0-9]+$"
                   },
                   "reserved": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  },
+                  "consumed_bytes": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  },
+                  "reserved_bytes": {
                     "type": "string",
                     "pattern": "^[0-9]+$"
                   }

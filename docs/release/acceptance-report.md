@@ -6,19 +6,19 @@ This is a populated readiness record, not a blank sign-off template. Application
 
 ## Evidence summary
 
-| Evidence                           | Result                                                     | Scope and limitation                                                                              |
-| ---------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Backend suite                      | Historical local pass: 42 tests                            | Real PostgreSQL and Better Auth session handling; mocked provider/Stripe responses                |
-| Browser suite                      | Historical local pass: 8 tests                             | Desktop/mobile Chromium workflows with test-created sessions; not real Google consent             |
-| TypeScript and build               | Historical local pass                                      | Local build; not a container or production deployment guarantee                                   |
-| Local service health               | Previously observed healthy                                | Standalone web and worker; not a current production SLA                                           |
-| Docker Compose                     | Configuration parsed                                       | Images not executed in the recorded validation                                                    |
-| Dependency advisory query          | 2026-09-22: zero advisories returned by `npm audit --json` | Snapshot of registry-known advisories; not a full code, container, license, or supply-chain audit |
-| Real Google/Drive/social flows     | Not run                                                    | Developer credentials and authorized accounts pending                                             |
-| Hosted Stripe test lifecycle       | Not run                                                    | Test products, portal, webhook setup pending                                                      |
-| Railway deploy/restore/rollback    | Not run                                                    | Access and infrastructure setup pending                                                           |
-| Platform approvals                 | Not evidenced                                              | See [approval register](provider-approvals.md)                                                    |
-| Accessibility/load/security review | Partial source/test evidence                               | Remaining findings in [documentation audit](../documentation-audit.md) and threat model           |
+| Evidence                           | Result                                                     | Scope and limitation                                                                               |
+| ---------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Backend suite                      | Historical local pass: 43 tests                            | Real PostgreSQL and Better Auth session handling; mocked provider/Stripe responses                 |
+| Browser suite                      | Historical local pass: 8 tests                             | Desktop/mobile Chromium workflows with test-created sessions; not real Google consent              |
+| TypeScript and build               | Historical local pass                                      | Local build; not a container or production deployment guarantee                                    |
+| Local service health               | Previously observed healthy                                | Standalone web and worker; not a current production SLA                                            |
+| Docker Compose                     | Configuration parsed                                       | `compose.yaml` and `docker-compose.prod.yml` validated; images not executed in recorded validation |
+| Dependency advisory query          | 2026-09-22: zero advisories returned by `npm audit --json` | Snapshot of registry-known advisories; not a full code, container, license, or supply-chain audit  |
+| Real Google/Drive/social flows     | Not run                                                    | Developer credentials and authorized accounts pending                                              |
+| Hosted Stripe test lifecycle       | Not run                                                    | Test products, portal, webhook setup pending                                                       |
+| Production deploy/restore/rollback | Not run                                                    | Hetzner + Coolify / Railway infrastructure setup pending                                           |
+| Platform approvals                 | Not evidenced                                              | See [approval register](provider-approvals.md)                                                     |
+| Accessibility/load/security review | Partial source/test evidence                               | Remaining findings in [documentation audit](../documentation-audit.md) and threat model            |
 
 Application tests were not rerun as part of authoring these documents. Preserve their historical dates and rerun against the actual candidate before acceptance. Source and test details are in [verification](../verification.md); scenario definitions are in [V-01–V-12](../lifecycle/05-validation.md).
 

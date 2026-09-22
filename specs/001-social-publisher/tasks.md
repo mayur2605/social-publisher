@@ -19,8 +19,8 @@ Checked tasks state only what is evidenced. Historical checks are not a claim th
 - [x] T008 [US3] Implement pg-boss scheduling, destination checkpoints, locking, retry budget, results, cancellation, and explicit outcome review.
 - [x] T009 [US4] Implement Stripe test checkout/portal/webhooks, plans, account limits, and atomic usage reservation/settlement.
 - [x] T010 [US5] Implement legal/setup screens and account deletion with local-original preservation checks.
-- [x] T011 [QA] Record historical local evidence: 42 backend tests, 8 browser tests, TypeScript/build, worker health, and Compose configuration parsing in `docs/verification.md`.
-- [x] T012 [Operations] Supply Docker/Compose/Railway configuration and provider/deployment/operations runbooks. Container execution/deployment is not included in this checkbox.
+- [x] T011 [QA] Record historical local evidence: 43 backend tests, 8 browser tests, TypeScript/build, worker health, and Compose configuration parsing in `docs/verification.md`.
+- [x] T012 [Operations] Supply Docker/Compose/Hetzner+Coolify/Railway configuration and provider/deployment/operations runbooks. Container execution/deployment is not included in this checkbox.
 
 ## Engineering hardening
 
@@ -45,7 +45,7 @@ Checked tasks state only what is evidenced. Historical checks are not a claim th
 
 ## Staging and release
 
-- [ ] T028 [Operations] Authenticate Railway, create isolated services/domain/secrets, and build/run the actual web/worker images. Depends on T012; phase 6.
+- [ ] T028 [Operations] Provision staging environment (Hetzner Cloud VPS + Coolify or Railway), configure domain/secrets, and build/run the web/worker images. Depends on T012; phase 6.
 - [ ] T029 [E-07] Test empty/concurrent migration startup, backups, isolated restore with remote reconciliation, and compatible rollback. Operations/engineering; depends on T028; V-12.
 - [ ] T030 [E-08] Configure health/backlog/integration/billing alerts, test delivery, and assign primary/backup responders. Operations; depends on T028.
 - [ ] T031 [Operations/QA] Record capacity, cost, recovery objectives, deployed smoke tests, and all required staging evidence. Depends on T013–T018 and T021–T030, except provider public approvals may remain pending for an authorized internal test.

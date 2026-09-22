@@ -16,7 +16,7 @@ If the app displays setup instructions instead of sign-in, the operator must fin
 
 ## Add a video
 
-Choose **Upload video** to send a file directly to an app-created “Social Publisher” folder in your Drive. The app accepts MP4/MOV up to 2 GiB; each destination may impose stricter limits. The app does not edit or convert videos.
+Choose **Upload video** to send a file directly to an app-created “Social Publisher” folder in your Drive. The app accepts MP4/MOV up to 2 GiB on Starter/Creator/Pro, and up to 10 GiB on Studio (for YouTube and Facebook Video). Short-form vertical videos (Instagram Reels, Facebook Reels, TikTok) are capped at 500 MB to protect upload performance and cloud egress. The app does not edit or convert videos.
 
 Keep the upload page open until the transfer completes. If a transfer is interrupted and **Resume upload** is available, fix the connection or Drive storage issue and resume. Current resume information is held in that page's memory: refreshing, navigating away, or closing the page can lose it. Check Drive for a completed file before starting again. This limitation is separate from scheduled publishing, which runs in the background after a source is ready.
 
@@ -60,11 +60,12 @@ For **Attention**, try **Check status** if the app has a remote identifier. If i
 
 Reconnect an account whose access expired or was revoked, then retry affected paused work. **Disconnect** removes stored connection grants and pauses affected pending posts. It does not delete your originals or already-published posts, and it cannot retract a request already accepted remotely.
 
-| Plan    | Monthly USD price | Active social accounts | Destination posts per billing period |
-| ------- | ----------------- | ---------------------- | ------------------------------------ |
-| Starter | $9                | 4                      | 60                                   |
-| Creator | $19               | 10                     | 200                                  |
-| Pro     | $39               | 25                     | 600                                  |
+| Plan        | Monthly USD price | Active social accounts | Destination posts / month | Bandwidth pool | Max video size                   |
+| :---------- | :---------------- | :--------------------- | :------------------------ | :------------- | :------------------------------- |
+| **Starter** | $9                | 4                      | 60                        | 40 GB          | 2 GB (YouTube) / 500 MB (Reels)  |
+| **Creator** | $19               | 10                     | 200                       | 120 GB         | 2 GB (YouTube) / 500 MB (Reels)  |
+| **Pro**     | $39               | 25                     | 600                       | 300 GB         | 2 GB (YouTube) / 500 MB (Reels)  |
+| **Studio**  | $79               | 50                     | 1,500                     | 750 GB         | 10 GB (YouTube) / 500 MB (Reels) |
 
 These are planned subscription prices; checkout is currently test-only. Drive does not count toward your social-account limit. One video posted to four accounts counts as four destination posts. Allowance is reserved while processing, consumed on confirmed publication, and released on confirmed failure. An uncertain outcome retains its reservation until resolved. Retrying a destination does not charge its allowance twice.
 

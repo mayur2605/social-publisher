@@ -30,7 +30,7 @@ Start with the [audit and requirement traceability](documentation-audit.md) for 
 | Policies                            | [Business/privacy/retention decisions](release/policy-decisions.md); app policy source remains pre-launch                                                     |
 | Release evidence                    | [Acceptance report](release/acceptance-report.md), [historical local verification](verification.md)                                                           |
 | Creator support                     | [Creator guide](help/creator-guide.md)                                                                                                                        |
-| Deployment/operations               | [Railway procedure](deployment.md), [diagnostic/recovery runbook](operations.md)                                                                              |
+| Deployment/operations               | [Production deployment](deployment.md) ([Hetzner + Coolify guide](deployment-hetzner-coolify.md)), [diagnostic/recovery runbook](operations.md)               |
 
 ## Specification-driven workflow
 

@@ -158,8 +158,9 @@ draft → scheduled → queued → processing → published
 **Subscription Model** (`src/lib/billing.ts`, `src/lib/plans.ts`):
 
 - Stripe test-mode only enforced (rejects live keys)
-- Plans: starter/creator/pro with per-plan account limits and monthly post quotas
-- Usage reservation via `reserve()` — checks entitlement, active accounts, quota; locks subscription row
+- Plans: Starter ($9/mo, 4 accounts, 60 posts, 40 GB bandwidth), Creator ($19/mo, 10 accounts, 200 posts, 120 GB bandwidth), Pro ($39/mo, 25 accounts, 600 posts, 300 GB bandwidth), and Studio ($79/mo, 50 accounts, 1,500 posts, 750 GB bandwidth, up to 10 GB video uploads for YouTube & Facebook Video)
+- Dual-metered quota via `reserve()` — validates plan entitlement, active accounts, monthly post count quota, and monthly bandwidth pool; locks subscription row
+- Margin safeguards: 500 MB cap on short-form destinations (Instagram Reels, Facebook Reels, TikTok) across all plans, preserving 50%–70% minimum gross margin
 - Usage states: reserved (queued) → consumed (published) or released (failed/paused with no progress)
 - Idempotent webhook handling via `billing_events` table
 - Out-of-order Stripe events handled by re-fetching authoritative state
@@ -184,18 +185,26 @@ draft → scheduled → queued → processing → published
 
 **Validation** (`src/lib/validation.ts`, `validateMedia()`):
 
-- **YouTube**: requires title, privacy (private/unlisted/public), madeForKids flag; max 12hrs
-- **Instagram**: Reels only; 1GB max, 3s–15min, 2200 char caption
-- **Facebook Reels**: 3–90s, portrait orientation required
-- **TikTok**: requires consent, privacy; 2200 char caption; validates against creator_info (duration limit, disabled features)
+- **YouTube**: requires title, privacy (private/unlisted/public), madeForKids flag; max 12hrs; up to 2 GB (Starter/Creator/Pro) or 10 GB (Studio)
+- **Facebook Video**: up to 2 GB (Starter/Creator/Pro) or 10 GB (Studio)
+- **Short-form Video** (Instagram Reels, Facebook Reels, TikTok): 500 MB max file size cap
+- **Instagram**: Reels only; 500 MB max, 3s–15min, 2200 char caption
+- **Facebook Reels**: 3–90s, portrait orientation required, 500 MB max
+- **TikTok**: requires consent, privacy; 2200 char caption; 500 MB max; validates against creator_info (duration limit, disabled features)
 - Public publishing gated by env flags: `YOUTUBE_PUBLIC_APPROVED`, `TIKTOK_PUBLIC_APPROVED`
 
 **Drive Integration** (`src/lib/drive.ts`):
 
-- MP4/MOV only, 2GB max
+- MP4/MOV only, up to 2 GB default (10 GB for Studio tier)
 - Validates checksum + size on every download (detects file changes/deletion)
 - Resumable uploads create capability URLs (not OAuth credentials)
 - Auto-creates "Social Publisher" folder in user's Drive
+
+## Deployment & Infrastructure
+
+- **Primary Target (Self-Hosted PaaS)**: Hetzner Cloud VPS (CPX21/CPX31, €6–€8/mo flat) + Coolify. Uses `docker-compose.prod.yml` with private Docker network for PostgreSQL, persistent named volumes, automated Cloudflare R2 / AWS S3 daily database backups, Traefik HTTPS reverse proxy, and 20 TB free monthly egress bandwidth (see `docs/deployment-hetzner-coolify.md`).
+- **Managed PaaS Alternative**: Railway (`railway.web.toml`, `railway.worker.toml`) with managed PostgreSQL plugin.
+- **Local Development**: Docker Compose (`compose.yaml`) for local PostgreSQL.
 
 ## Documentation and readiness
 

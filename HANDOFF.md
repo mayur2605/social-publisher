@@ -125,6 +125,16 @@ Progress can be committed with the work; do not repeatedly commit just to update
 
 ## 11. Recent progress
 
+### 2026-09-22 — Antigravity / Gemini — Repository-Wide Documentation Alignment
+
+- Synchronized all repository documentation, lifecycle phases, specifications, and API contracts with recent architectural, billing, and infrastructure changes:
+  - **All-in-One Infrastructure**: Documented **Hetzner Cloud VPS + Coolify** (€6–€8/mo flat, 20 TB monthly video egress) across `README.md`, `docs/README.md`, `CLAUDE.md`, `docs/operations.md`, `docs/lifecycle/03-technical-specification.md`, `docs/lifecycle/04-implementation-roadmap.md`, `docs/lifecycle/05-validation.md`, `docs/lifecycle/06-staging.md`, `docs/verification.md`, `docs/release/policy-decisions.md`, and `specs/001-social-publisher/plan.md` & `tasks.md`.
+  - **Operational Commands**: Added real-time container log monitoring, worker restart, and offsite database backup commands in `docs/operations.md` for both Coolify / Docker Compose (`docker compose -f docker-compose.prod.yml ...`) and Railway CLI.
+  - **Studio Tier & Margin Protection**: Aligned plan pricing ($9 Starter, $19 Creator, $39 Pro, $79 Studio), monthly post quotas (60 / 200 / 600 / 1,500), monthly bandwidth pools (40 GB / 120 GB / 300 GB / 750 GB), short-form caps (500 MB for Instagram Reels, Facebook Reels, TikTok), and long-form video limits (up to 10 GB for YouTube and Facebook Video on Studio) across `CLAUDE.md`, `docs/lifecycle/01-discovery.md`, `02-prd.md`, `03-technical-specification.md`, `docs/help/creator-guide.md`, `docs/provider-setup.md`, and `specs/001-social-publisher/spec.md`.
+  - **API Contract & OpenAPI**: Updated `docs/api/openapi.json` to include `consumed_bytes` and `reserved_bytes` in workspace usage, and added `studio` to the billing checkout and subscription plan enums. Validated with `@redocly/cli` (0 errors).
+  - **Verification Baseline**: Updated test baselines across `docs/verification.md`, `docs/release/acceptance-report.md`, and `docs/lifecycle/05-validation.md` to record 43 passing backend unit/integration tests and 8 Playwright E2E browser tests.
+- Formatted all markdown and code with Prettier (`npm run format:check`), verified zero ESLint errors (`npm run lint`), verified TypeScript (`npm run typecheck`), and re-ran all test suites (`npm test`: 43/43 passed).
+
 ### 2026-09-22 — Antigravity / Gemini — Production Hosting: Hetzner Cloud VPS + Coolify
 
 - Finalized all-in-one low-cost hosting architecture: **Hetzner Cloud VPS + Coolify** (€6–€8/mo flat, 20,000 GB / 20 TB free monthly video egress bandwidth).

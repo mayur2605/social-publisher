@@ -18,4 +18,4 @@ Checked means the **requirement is documented clearly enough for the stated crit
 - [ ] Upload resumption across page reload/closure has an accepted product decision and matching implementation/evidence (T037).
 - [ ] Pilot load, dispatch target, recovery objectives, and release scope have measured owner acceptance (T031/T032).
 
-Open items remain visible for clarification during their bounded tasks; this manually authored checklist adds no new approval process to the user's authorized work. See [Spec Kit review](../../../docs/spec-kit-review.md) for the distinction between these artifacts and installed tooling.
+Open items remain visible for clarification during their bounded tasks; this manually authored checklist adds no new approval process to the user's authorized work. See [Spec Kit review](../../../docs/spec-kit-review.md) for the verified tooling installation and the distinction between installation and a completed workflow.

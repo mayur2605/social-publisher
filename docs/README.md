@@ -32,7 +32,7 @@ Start with the [audit and requirement traceability](documentation-audit.md) for 
 
 ## Specification-driven workflow
 
-[Constitution](../.specify/memory/constitution.md) → [feature spec](../specs/001-social-publisher/spec.md) → [plan](../specs/001-social-publisher/plan.md) → [tasks](../specs/001-social-publisher/tasks.md), with a [requirement-quality checklist](../specs/001-social-publisher/checklists/requirements.md). The [official GitHub Spec Kit review](spec-kit-review.md) explains current alignment and absent CLI/integration tooling.
+[Constitution](../.specify/memory/constitution.md) → [feature spec](../specs/001-social-publisher/spec.md) → [plan](../specs/001-social-publisher/plan.md) → [tasks](../specs/001-social-publisher/tasks.md), with a [requirement-quality checklist](../specs/001-social-publisher/checklists/requirements.md). The [official GitHub Spec Kit review](spec-kit-review.md) records the installed Spec Kit 1.0.9 Codex integration, verification, and use with the existing feature.
 
 ## Source-of-truth rules
 

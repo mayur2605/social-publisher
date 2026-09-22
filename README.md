@@ -8,7 +8,7 @@ Use the [complete documentation index](docs/README.md) and [audit/traceability r
 
 Start with the [eight-phase lifecycle guide](docs/lifecycle/README.md): discovery, PRD, technical specification, implementation roadmap, validation, staging, launch, and production operations. It distinguishes implemented code and local test evidence from pending research, provider approvals, real-account testing, and deployment.
 
-The [feature specification](specs/001-social-publisher/spec.md), [implementation plan](specs/001-social-publisher/plan.md), [task register](specs/001-social-publisher/tasks.md), and [constitution](.specify/memory/constitution.md) provide Spec Kit-style planning artifacts. Specify CLI and agent workflow tooling have not been installed.
+The [feature specification](specs/001-social-publisher/spec.md), [implementation plan](specs/001-social-publisher/plan.md), [task register](specs/001-social-publisher/tasks.md), and [constitution](.specify/memory/constitution.md) provide Spec Kit-style planning artifacts. Spec Kit 1.0.9 and its Codex skills are installed. See the [installation and usage record](docs/spec-kit-review.md) for verification and setup on another machine.
 
 ## Run locally
 

@@ -1,0 +1,5 @@
+# Share reviewed skills, not machine-local agent state or credentials.
+*
+!.gitignore
+!skills/
+!skills/**

@@ -191,7 +191,7 @@ draft → scheduled → queued → processing → published
 
 ## Documentation and readiness
 
-Use [the documentation index](docs/README.md) and [audit/traceability report](docs/documentation-audit.md). Requirements remain authoritative even where implementation is incomplete. The app has local test evidence, not production acceptance. Spec Kit planning artifacts are manually maintained; its CLI and agent workflows are not installed. Preserve the existing command guidance when updating this file.
+Use [the documentation index](docs/README.md) and [audit/traceability report](docs/documentation-audit.md). Requirements remain authoritative even where implementation is incomplete. The app has local test evidence, not production acceptance. Spec Kit 1.0.9 is installed with Codex skills in `.agents/skills`; existing planning artifacts are preserved. Use the current feature pointer and [installation record](docs/spec-kit-review.md). Installation is not an implementation/convergence run. Preserve the existing command guidance when updating this file.
 
 ## Important Notes
 

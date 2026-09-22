@@ -25,7 +25,7 @@ Owner roles are responsibilities, not staffing claims: product/launch owner is M
 
 ## Specification workflow
 
-The repository now includes a [constitution](../../.specify/memory/constitution.md), [feature specification](../../specs/001-social-publisher/spec.md), [implementation plan](../../specs/001-social-publisher/plan.md), and [tasks](../../specs/001-social-publisher/tasks.md). These are manually authored planning artifacts following the specification → plan → tasks separation described by [GitHub Spec Kit](https://github.com/github/spec-kit). The Specify CLI, agent commands, and generated workflow scripts are **not installed** by this documentation change.
+The repository now includes a [constitution](../../.specify/memory/constitution.md), [feature specification](../../specs/001-social-publisher/spec.md), [implementation plan](../../specs/001-social-publisher/plan.md), and [tasks](../../specs/001-social-publisher/tasks.md). These are manually authored planning artifacts following the specification → plan → tasks separation described by [GitHub Spec Kit](https://github.com/github/spec-kit). Spec Kit 1.0.9 was subsequently installed with Codex skills and shared workflow scripts; the existing documents were preserved. See the [installation record](../spec-kit-review.md).
 
 For future changes: describe the user outcome and acceptance first; update the technical plan and migration implications; create a scoped task; implement and record evidence; then reassess the relevant phase gate. Do not regenerate these documents in a way that marks outstanding work complete.
 
@@ -41,4 +41,4 @@ When code and desired behavior differ, record the difference in the roadmap and 
 
 ## Supporting architecture and release assurance
 
-The [complete documentation index](../README.md) links the API contract, design specification, threat model, dependency policy, provider approvals, acceptance report, creator guide, policy decisions and [documentation audit](../documentation-audit.md). The [official Spec Kit alignment review](../spec-kit-review.md) records what was checked and why these manual artifacts are not an installed toolchain.
+The [complete documentation index](../README.md) links the API contract, design specification, threat model, dependency policy, provider approvals, acceptance report, creator guide, policy decisions and [documentation audit](../documentation-audit.md). The [official Spec Kit alignment review](../spec-kit-review.md) records the subsequent toolchain installation and keeps installation separate from actual workflow execution.

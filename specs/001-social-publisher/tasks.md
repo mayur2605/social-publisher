@@ -7,7 +7,7 @@ Checked tasks state only what is evidenced. Historical checks are not a claim th
 ## Documentation and product definition
 
 - [x] T001 [Product] Document all eight lifecycle phases, PRD requirement IDs, acceptance plan, and release gates in `docs/lifecycle/`.
-- [x] T002 [Engineering] Add constitution, feature specification, implementation plan, and this task register; clearly state CLI/workflow tooling is not installed.
+- [x] T002 [Engineering] Add constitution, feature specification, implementation plan, and this task register. These were initially manual artifacts; subsequent tooling installation is recorded separately in T043.
 - [ ] T003 [Product] Conduct discovery experiments H-01–H-05 and record a pilot go/revise/stop decision. Depends on T001.
 - [ ] T004 [Product] Establish business country/entity, support contact, legal review, and merchant eligibility; retain the live-billing block until separately reviewed.
 
@@ -66,8 +66,8 @@ Checked tasks state only what is evidenced. Historical checks are not a claim th
 - [ ] T040 [US2/US3] Validate design state coverage and resolve DST ambiguity/error rules in the UI; record keyboard, screen-reader, real-mobile and error-recovery evidence. Product/QA; complements T017/T026.
 - [ ] T041 [Engineering/operations] Complete target-runtime/container, package provenance/license, OS-image and dependency-update assurance beyond the zero-advisory npm snapshot. Depends on T018/T028; NFR-06/SEC-12.
 - [x] T042 [Documentation] Add API, threat, approval, release, help, policy, design, dependency and traceability records; audit first-party docs against source; check official GitHub Spec Kit guidance. Actual release acceptance remains incomplete.
-- [ ] T043 [Optional tooling] If adopting Specify CLI, use a reviewed baseline and bounded feature, preserve manual artifacts, review generated integration files, and record the installed version. This is not a production runtime prerequisite and was not performed by the documentation review.
+- [x] T043 [Tooling] Installed official Spec Kit 1.0.9 from release tag `v1.0.9` on 2026-09-22; initialized Codex skills/shared scripts; preserved existing artifacts; selected the existing feature with the supplied prerequisite script. `specify integration status --json` reported `ok` with zero missing/modified managed files; required spec/plan/tasks checks passed. See `docs/spec-kit-review.md`. No implementation/convergence workflow was run.
 
 ## Completion evidence
 
-When checking an open task, append or link its commit, date, operator/role, test IDs, and evidence location. Sensitive provider approval/account artifacts belong in restricted storage; link a non-secret reference. Failed, blocked, deferred, or not-run tasks stay unchecked with an explanation. Installing Specify CLI/agent integrations is outside this documentation deliverable and must not be inferred from T002.
+When checking an open task, append or link its commit, date, operator/role, test IDs, and evidence location. Sensitive provider approval/account artifacts belong in restricted storage; link a non-secret reference. Failed, blocked, deferred, or not-run tasks stay unchecked with an explanation. Tooling installation is evidenced by T043 rather than inferred from T002. An installed workflow is not proof that its implementation or convergence phases have run.

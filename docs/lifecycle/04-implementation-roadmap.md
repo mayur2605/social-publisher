@@ -84,4 +84,4 @@ Roadmap changes must retain evidence history and explain any deferred advertised
 
 ## Documentation audit additions
 
-Tasks T037–T041 cover upload resume across page lifetime, vendor-auth/auxiliary-record review, provider/source/outcome risks, UX/DST acceptance, and dependency/runtime assurance. They refine the existing hardening milestones rather than add new product scope. T042 records documentation work only; T043 is optional Spec Kit tool adoption. See the [audit matrix](../documentation-audit.md) for requirement-to-code-to-evidence mapping.
+Tasks T037–T041 cover upload resume across page lifetime, vendor-auth/auxiliary-record review, provider/source/outcome risks, UX/DST acceptance, and dependency/runtime assurance. They refine the existing hardening milestones rather than add new product scope. T042 records documentation work only; T043 records the completed Spec Kit tooling adoption; no feature implementation was triggered by installation. See the [audit matrix](../documentation-audit.md) for requirement-to-code-to-evidence mapping.

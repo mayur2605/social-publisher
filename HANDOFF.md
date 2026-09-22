@@ -125,6 +125,12 @@ Progress can be committed with the work; do not repeatedly commit just to update
 
 ## 11. Recent progress
 
+### 2026-09-22 — Antigravity / Gemini — Security & Git Hygiene
+
+- Performed repository-wide git history audit across all 6 commits (`7265f91`..`6764dff`) for leaked secrets, API keys, credentials, tokens, and sensitive files. Confirmed zero credentials or sensitive values were ever committed to git history.
+- Improved `.gitignore` to comprehensively block all local environment files (`.env*`, `*.env`), private keys (`*.pem`, `*.key`, `*.pfx`, etc.), credentials, local machine/agent state (`.local/`, `.remember/`, `.claude/`), OS files (`.DS_Store`, `Thumbs.db`), IDEs, test reports, and database dumps.
+- Verified ignore patterns with `git check-ignore` and ensured clean working tree status.
+
 ### 2026-09-22 — Antigravity / Gemini — Tooling: Prettier & ESLint
 
 - Added ESLint 9 flat configuration (`eslint.config.mjs`) integrating `@next/eslint-plugin-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, and `eslint-config-prettier`.

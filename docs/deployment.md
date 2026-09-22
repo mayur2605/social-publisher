@@ -1,6 +1,13 @@
-# Railway deployment
+# Production deployment
 
-Deployment needs an authenticated Railway account and a project. No Railway credentials are bundled in the repository.
+Social Publisher supports two deployment targets for running the complete SaaS (Web + 24/7 Worker + PostgreSQL) in one place:
+
+1. **Hetzner Cloud VPS + Coolify (Recommended for Lowest Cost & High Bandwidth)**: Full guide at [deployment-hetzner-coolify.md](deployment-hetzner-coolify.md). Runs via [docker-compose.prod.yml](../docker-compose.prod.yml) on a €6–€8/mo VPS with 20,000 GB (20 TB) free monthly outbound video egress.
+2. **Railway (Alternative for Zero-DevOps Managed PaaS)**: Described below. Uses `railway.web.toml` and `railway.worker.toml`.
+
+---
+
+## Railway deployment
 
 1. Push this repository to your own Git provider and create a Railway project.
 2. Add PostgreSQL. Use Railway's private database URL in both services. Enable a backup policy suitable for your launch and budget.

@@ -1,0 +1,121 @@
+# Production Docker Compose for Coolify & Self-Hosted Hetzner Cloud VPS
+# Runs the complete SaaS in one place:
+# 1. PostgreSQL 17 database (private internal network, persistent NVMe volume)
+# 2. Database migration runner (runs checked-in SQL migrations once on startup)
+# 3. Next.js 16 web application (UI, OAuth callbacks, API routes on port 3000)
+# 4. Durable 24/7 background worker (Node.js + pg-boss queue processor)
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-publisher}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-publisher}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-publisher} -d ${POSTGRES_DB:-publisher}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-net
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrate
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-publisher}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-publisher}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internal-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-publisher}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-publisher}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?BETTER_AUTH_URL is required}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_PICKER_API_KEY: ${GOOGLE_PICKER_API_KEY:-}
+      GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER:-}
+      META_APP_ID: ${META_APP_ID:-}
+      META_APP_SECRET: ${META_APP_SECRET:-}
+      TIKTOK_CLIENT_KEY: ${TIKTOK_CLIENT_KEY:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-}
+      STRIPE_PRICE_CREATOR: ${STRIPE_PRICE_CREATOR:-}
+      STRIPE_PRICE_PRO: ${STRIPE_PRICE_PRO:-}
+      STRIPE_PRICE_STUDIO: ${STRIPE_PRICE_STUDIO:-}
+      LEGAL_ENTITY_NAME: ${LEGAL_ENTITY_NAME:-}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e ''fetch("http://127.0.0.1:3000/api/health").then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))''',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - internal-net
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-publisher}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-publisher}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      META_APP_ID: ${META_APP_ID:-}
+      META_APP_SECRET: ${META_APP_SECRET:-}
+      TIKTOK_CLIENT_KEY: ${TIKTOK_CLIENT_KEY:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - internal-net
+
+volumes:
+  postgres-data:
+
+networks:
+  internal-net:
+    driver: bridge

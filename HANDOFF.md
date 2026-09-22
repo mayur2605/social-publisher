@@ -2,7 +2,7 @@
 
 **Read this first, regardless of agent or provider. Update it as work progresses.**
 
-Last checkpoint: **2026-09-22T03:50:00Z** · Maintainer for this checkpoint: **Antigravity / Gemini**
+Last checkpoint: **2026-09-22T03:58:00Z** · Maintainer for this checkpoint: **Antigravity / Gemini**
 
 ## 1. Resume in one message
 
@@ -124,6 +124,15 @@ Each entry must contain:
 Progress can be committed with the work; do not repeatedly commit just to update a self-referencing SHA. Refer to code commits and use Git history for the handoff file's own revision. Pushed records are durable across providers; unsaved chat or uncommitted local diffs are not.
 
 ## 11. Recent progress
+
+### 2026-09-22 — Antigravity / Gemini — Production Hosting: Hetzner Cloud VPS + Coolify
+
+- Finalized all-in-one low-cost hosting architecture: **Hetzner Cloud VPS + Coolify** (€6–€8/mo flat, 20,000 GB / 20 TB free monthly video egress bandwidth).
+- Created production Docker Compose configuration [`docker-compose.prod.yml`](docker-compose.prod.yml) defining PostgreSQL 17 Alpine, migration runner, Next.js standalone web service, and 24/7 Node background worker over a secure private Docker bridge network.
+- Authored step-by-step master deployment guide [`docs/deployment-hetzner-coolify.md`](docs/deployment-hetzner-coolify.md) covering server provisioning, 1-command Coolify setup, Cloudflare DNS & SSL, production environment variables, and automated offsite backups.
+- Updated [`docs/deployment.md`](docs/deployment.md) to document both Hetzner/Coolify and Railway targets.
+- Verified Docker Compose configuration syntax with `docker-compose -f docker-compose.prod.yml config`.
+- Verified all 43 backend tests (`npm test`), ESLint (`npm run lint`), and Prettier formatting (`npm run format:check`).
 
 ### 2026-09-22 — Antigravity / Gemini — Bandwidth Safeguards & Margin Protection
 

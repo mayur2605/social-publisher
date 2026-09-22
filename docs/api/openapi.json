@@ -1,0 +1,2549 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Social Publisher application API",
+    "version": "1.0.0",
+    "description": "Contract derived from application source baseline 7265f91. Documents all app-owned handlers; Better Auth vendor routes at /api/auth/* are separately described in docs/api/README.md, not invented as a stable public API. APIs are browser/session oriented; there is no API-key or bearer-token developer API."
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Same-origin deployment API"
+    }
+  ],
+  "security": [
+    {
+      "localSession": []
+    },
+    {
+      "secureSession": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Workspace",
+      "description": "Workspace application operations"
+    },
+    {
+      "name": "Connections",
+      "description": "Connections application operations"
+    },
+    {
+      "name": "Drive",
+      "description": "Drive application operations"
+    },
+    {
+      "name": "Media",
+      "description": "Media application operations"
+    },
+    {
+      "name": "Posts",
+      "description": "Posts application operations"
+    },
+    {
+      "name": "Billing",
+      "description": "Billing application operations"
+    },
+    {
+      "name": "Account",
+      "description": "Account application operations"
+    },
+    {
+      "name": "Health",
+      "description": "Health application operations"
+    }
+  ],
+  "paths": {
+    "/workspace": {
+      "get": {
+        "operationId": "getWorkspace",
+        "summary": "Read the owner workspace",
+        "description": "Returns at most 100 media and 100 posts. No pagination contract yet. Counts are decimal strings; timestamps are ISO strings. Tokens/checkpoints are not returned.",
+        "tags": ["Workspace"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        }
+      }
+    },
+    "/connections/authorize/{provider}": {
+      "post": {
+        "operationId": "authorizeConnection",
+        "summary": "Begin dedicated integration consent",
+        "description": "Requires an existing app session. Stores one-time owner-bound OAuth state; returns a provider URL. This does not sign in or replace the app identity.",
+        "tags": ["Connections"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Url"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["drive", "youtube", "meta", "tiktok"]
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/connections/callback/{provider}": {
+      "get": {
+        "operationId": "completeConnection",
+        "summary": "Complete dedicated integration consent",
+        "description": "Success needs state and code. An error parameter redirects to accounts?connection=canceled without exchanging a code. App session is still required.",
+        "tags": ["Connections"],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "302": {
+            "description": "Redirect to /accounts?connection=success or connection=canceled",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["drive", "youtube", "meta", "tiktok"]
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/connections/{connectionId}": {
+      "delete": {
+        "operationId": "disconnectConnection",
+        "summary": "Erase grant and pause affected pending destinations",
+        "description": "Erase grant and pause affected pending destinations",
+        "tags": ["Connections"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/connections/{connectionId}/active": {
+      "post": {
+        "operationId": "setConnectionActive",
+        "summary": "Select an active social account within plan limit",
+        "description": "Select an active social account within plan limit",
+        "tags": ["Connections"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["active"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connections/{connectionId}/creator": {
+      "get": {
+        "operationId": "getCreatorInfo",
+        "summary": "Read current TikTok creator settings",
+        "description": "Read current TikTok creator settings",
+        "tags": ["Connections"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatorInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/drive/picker": {
+      "post": {
+        "operationId": "getPickerConfiguration",
+        "summary": "Issue authenticated Picker configuration",
+        "description": "Returns a short-lived Drive access token intentionally for Google Picker. API key/appId may be omitted if not configured; the Picker workflow then cannot complete. Never log or persist accessToken in analytics.",
+        "tags": ["Drive"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "apiKey": {
+                      "type": "string"
+                    },
+                    "appId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["accessToken"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/drive/import": {
+      "post": {
+        "operationId": "importDriveFile",
+        "summary": "Import accessible video metadata",
+        "description": "Requires ready MP4/MOV metadata, download access, checksum, and size <= 2147483648 bytes. Same file/checksum import returns the existing media record.",
+        "tags": ["Drive"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileId": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  }
+                },
+                "required": ["fileId"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/upload": {
+      "post": {
+        "operationId": "startDriveUpload",
+        "summary": "Initiate browser-to-Drive resumable upload",
+        "description": "Returns a sensitive upload-only capability. Browser sends bytes directly to Drive. This API accepts JSON metadata, not a multipart video.",
+        "tags": ["Drive"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uploadUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "required": ["uploadUrl"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "mimeType": {
+                    "type": "string",
+                    "enum": ["video/mp4", "video/quicktime"]
+                  },
+                  "size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483648
+                  }
+                },
+                "required": ["name", "mimeType", "size"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/{mediaId}/preview": {
+      "get": {
+        "operationId": "getMediaPreview",
+        "summary": "Stream private video",
+        "description": "Owner session required. HEAD has no response body. Drive source metadata is rechecked before serving bytes.",
+        "tags": ["Media"],
+        "responses": {
+          "200": {
+            "description": "Full video",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/quicktime": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "206": {
+            "description": "Requested byte range",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/quicktime": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "416": {
+            "$ref": "#/components/responses/416"
+          }
+        },
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^bytes=[0-9]+-[0-9]*$"
+            },
+            "description": "Single forward range only; suffix and multi-range requests rejected."
+          }
+        ]
+      },
+      "head": {
+        "operationId": "headMediaPreview",
+        "summary": "Read private video headers",
+        "description": "Owner session required. HEAD has no response body. Drive source metadata is rechecked before serving bytes.",
+        "tags": ["Media"],
+        "responses": {
+          "200": {
+            "description": "Full video",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error status; HEAD has no body."
+          },
+          "401": {
+            "description": "Error status; HEAD has no body."
+          },
+          "403": {
+            "description": "Error status; HEAD has no body."
+          },
+          "404": {
+            "description": "Error status; HEAD has no body."
+          },
+          "500": {
+            "description": "Error status; HEAD has no body."
+          },
+          "502": {
+            "description": "Error status; HEAD has no body."
+          },
+          "503": {
+            "description": "Error status; HEAD has no body."
+          },
+          "206": {
+            "description": "Requested byte range",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Error status; HEAD has no body."
+          }
+        },
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^bytes=[0-9]+-[0-9]*$"
+            },
+            "description": "Single forward range only; suffix and multi-range requests rejected."
+          }
+        ]
+      }
+    },
+    "/media/stream/{destinationId}": {
+      "get": {
+        "operationId": "getSignedMedia",
+        "summary": "Stream private video",
+        "description": "For signed media, both signature and expiry must validate, destination must be processing/attention, and its social connection must be active/connected. Source metadata and Drive authorization are checked. HEAD has no response body.",
+        "tags": ["Media"],
+        "responses": {
+          "200": {
+            "description": "Full video",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/quicktime": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "206": {
+            "description": "Requested byte range",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/quicktime": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "416": {
+            "$ref": "#/components/responses/416"
+          }
+        },
+        "parameters": [
+          {
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^bytes=[0-9]+-[0-9]*$"
+            },
+            "description": "Single forward range only; suffix and multi-range requests rejected."
+          },
+          {
+            "name": "expires",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Unix epoch milliseconds; generated lifetime 24h, maximum accepted remaining horizon 25h."
+          },
+          {
+            "name": "signature",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "mediaSignature": []
+          }
+        ]
+      },
+      "head": {
+        "operationId": "headSignedMedia",
+        "summary": "Read private video headers",
+        "description": "For signed media, both signature and expiry must validate, destination must be processing/attention, and its social connection must be active/connected. Source metadata and Drive authorization are checked. HEAD has no response body.",
+        "tags": ["Media"],
+        "responses": {
+          "200": {
+            "description": "Full video",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error status; HEAD has no body."
+          },
+          "403": {
+            "description": "Error status; HEAD has no body."
+          },
+          "404": {
+            "description": "Error status; HEAD has no body."
+          },
+          "500": {
+            "description": "Error status; HEAD has no body."
+          },
+          "502": {
+            "description": "Error status; HEAD has no body."
+          },
+          "503": {
+            "description": "Error status; HEAD has no body."
+          },
+          "206": {
+            "description": "Requested byte range",
+            "headers": {
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Present for partial response."
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Error status; HEAD has no body."
+          }
+        },
+        "parameters": [
+          {
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^bytes=[0-9]+-[0-9]*$"
+            },
+            "description": "Single forward range only; suffix and multi-range requests rejected."
+          },
+          {
+            "name": "expires",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Unix epoch milliseconds; generated lifetime 24h, maximum accepted remaining horizon 25h."
+          },
+          {
+            "name": "signature",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "mediaSignature": []
+          }
+        ]
+      }
+    },
+    "/posts": {
+      "post": {
+        "operationId": "createPost",
+        "summary": "Create post",
+        "description": "All PostInput fields are required, including for PATCH. Drafts skip platform validation but require owned active connections. Now/schedule requires active entitlement and valid destination settings. Duplicate destination connections are rejected. PATCH refuses started work and replaces destination records. Creation has no client idempotency key: do not blindly replay an uncertain submission.",
+        "tags": ["Posts"],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": ["id"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{postId}": {
+      "patch": {
+        "operationId": "replacePost",
+        "summary": "Replace editable post and its destinations",
+        "description": "All PostInput fields are required, including for PATCH. Drafts skip platform validation but require owned active connections. Now/schedule requires active entitlement and valid destination settings. Duplicate destination connections are rejected. PATCH refuses started work and replaces destination records. Creation has no client idempotency key: do not blindly replay an uncertain submission.",
+        "tags": ["Posts"],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": ["id"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          }
+        },
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{postId}/cancel": {
+      "post": {
+        "operationId": "cancelPost",
+        "summary": "Cancel a post before publication starts",
+        "description": "Cancel a post before publication starts",
+        "tags": ["Posts"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          }
+        },
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/destinations/{destinationId}/retry": {
+      "post": {
+        "operationId": "retryDestination",
+        "summary": "Retry or recheck an affected destination",
+        "description": "Only failed, paused, attention. Attention needs remote_id, otherwise 400. Failed clears upload checkpoint and remote ID; paused/attention preserve them. Resets retry budget; checks entitlement at worker dispatch. Published destinations cannot be retried.",
+        "tags": ["Posts"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/destinations/{destinationId}/resolve": {
+      "post": {
+        "operationId": "resolveDestination",
+        "summary": "Record creator-verified uncertain outcome",
+        "description": "Requires actual creator inspection; app does not independently verify this assertion. Only attention state. Published consumes reserved usage; not_published marks failed and releases usage. Does not delete remote content.",
+        "tags": ["Posts"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          }
+        },
+        "parameters": [
+          {
+            "name": "destinationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "type": "string",
+                    "enum": ["published", "not_published"]
+                  },
+                  "confirmed": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                },
+                "required": ["resolution", "confirmed"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/checkout": {
+      "post": {
+        "operationId": "createCheckout",
+        "summary": "Open test checkout or existing billing portal",
+        "description": "Open test checkout or existing billing portal",
+        "tags": ["Billing"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Url"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "enum": ["starter", "creator", "pro"]
+                  }
+                },
+                "required": ["plan"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/portal": {
+      "post": {
+        "operationId": "createPortal",
+        "summary": "Open test billing management",
+        "description": "Open test billing management",
+        "tags": ["Billing"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Url"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ]
+      }
+    },
+    "/billing/webhook": {
+      "post": {
+        "operationId": "receiveStripeEvent",
+        "summary": "Verify and deduplicate a Stripe test webhook",
+        "description": "Raw body must be unchanged for Stripe signature verification. Valid signed non-subscription events are acknowledged without entitlement changes. Unknown subscription price returns 400. Live events rejected. SDK/network failures can return 500; retry delivery safely. No browser Origin or cookie required.",
+        "tags": ["Billing"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": ["received"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StripeEvent"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "stripeSignature": []
+          }
+        ]
+      }
+    },
+    "/account": {
+      "delete": {
+        "operationId": "deleteAccount",
+        "summary": "Delete app records and cancel subscription",
+        "description": "Rejects processing/attention destinations with 400; cancels non-canceled Stripe subscription before deleting local user and cascaded records. Drive originals and remote posts remain.",
+        "tags": ["Account"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ok"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
+          "502": {
+            "$ref": "#/components/responses/502"
+          },
+          "503": {
+            "$ref": "#/components/responses/503"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Must equal the origin of BETTER_AUTH_URL, including port locally."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "confirmation": {
+                    "type": "string",
+                    "const": "DELETE"
+                  }
+                },
+                "required": ["confirmation"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Read database and worker heartbeat health",
+        "description": "Read database and worker heartbeat health",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Database reachable and worker heartbeat younger than one minute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable or worker heartbeat stale/missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": ["error"]
+      },
+      "Ok": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": ["ok"]
+      },
+      "Url": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": ["string", "null"],
+            "format": "uri"
+          }
+        },
+        "required": ["url"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "image": {
+            "type": ["string", "null"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "emailVerified",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string",
+            "enum": ["drive", "youtube", "instagram", "facebook", "tiktok"]
+          },
+          "label": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "external_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "platform",
+          "label",
+          "active",
+          "status",
+          "external_id"
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "connection_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "drive_file_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string",
+            "enum": ["video/mp4", "video/quicktime"]
+          },
+          "size": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "PostgreSQL bigint serialized as a decimal string; bytes."
+          },
+          "checksum": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number",
+            "description": "Seconds"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "connection_id",
+          "drive_file_id",
+          "name",
+          "mime_type",
+          "size",
+          "checksum",
+          "duration",
+          "width",
+          "height",
+          "created_at"
+        ]
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "privacy": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "madeForKids": {
+            "type": "boolean"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["video", "reel"]
+          },
+          "allowComment": {
+            "type": "boolean"
+          },
+          "allowDuet": {
+            "type": "boolean"
+          },
+          "allowStitch": {
+            "type": "boolean"
+          },
+          "commercial": {
+            "type": "boolean"
+          },
+          "ownBrand": {
+            "type": "boolean"
+          },
+          "branded": {
+            "type": "boolean"
+          },
+          "consent": {
+            "type": "boolean"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "Destination": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "scheduled",
+              "queued",
+              "processing",
+              "published",
+              "failed",
+              "attention",
+              "paused",
+              "canceled"
+            ]
+          },
+          "error": {
+            "type": ["string", "null"]
+          },
+          "url": {
+            "type": ["string", "null"]
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options"
+          }
+        },
+        "required": [
+          "id",
+          "connectionId",
+          "platform",
+          "label",
+          "status",
+          "error",
+          "url",
+          "options"
+        ]
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "enum": ["starter", "creator", "pro"]
+          },
+          "status": {
+            "type": "string"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancel_at_period_end": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "plan",
+          "status",
+          "period_start",
+          "period_end",
+          "cancel_at_period_end"
+        ]
+      },
+      "CreatorInfo": {
+        "type": "object",
+        "properties": {
+          "creator_avatar_url": {
+            "type": "string"
+          },
+          "creator_username": {
+            "type": "string"
+          },
+          "creator_nickname": {
+            "type": "string"
+          },
+          "privacy_level_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comment_disabled": {
+            "type": "boolean"
+          },
+          "duet_disabled": {
+            "type": "boolean"
+          },
+          "stitch_disabled": {
+            "type": "boolean"
+          },
+          "max_video_post_duration_sec": {
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "additionalProperties": true,
+        "description": "TikTok response data forwarded unchanged; provider fields may evolve."
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "database": {
+            "type": "boolean"
+          },
+          "worker": {
+            "type": "boolean"
+          }
+        },
+        "required": ["database", "worker"]
+      },
+      "PostInput": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caption": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone accepted by Intl.DateTimeFormat; intended IANA timezone."
+          },
+          "scheduledAt": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "description": "ISO datetime including offset. Schedule mode requires at least one minute in the future. Now mode uses server time."
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["draft", "schedule", "now"]
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "connectionId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "options": {
+                  "$ref": "#/components/schemas/Options"
+                }
+              },
+              "required": ["connectionId", "options"]
+            },
+            "minItems": 1,
+            "maxItems": 25
+          }
+        },
+        "required": [
+          "mediaId",
+          "caption",
+          "timezone",
+          "scheduledAt",
+          "mode",
+          "destinations"
+        ]
+      },
+      "StripeEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "livemode": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "object": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "required": ["object"]
+          }
+        },
+        "required": ["id", "type", "livemode", "data"],
+        "additionalProperties": true,
+        "description": "Raw Stripe snapshot event. Only valid signed test-mode events are accepted; subscription payload is interpreted by the installed Stripe SDK."
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "media_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "scheduled_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "media_name": {
+            "type": "string"
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Destination"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "media_id",
+          "caption",
+          "timezone",
+          "scheduled_at",
+          "created_at",
+          "media_name",
+          "destinations"
+        ]
+      },
+      "Workspace": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "connections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            }
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Media"
+            },
+            "maxItems": 100
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            },
+            "maxItems": 100
+          },
+          "subscription": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Subscription"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "consumed": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  },
+                  "reserved": {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  }
+                },
+                "required": ["consumed", "reserved"]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "drivePicker": {
+                "type": "boolean"
+              },
+              "billing": {
+                "type": "boolean"
+              },
+              "youtubePublic": {
+                "type": "boolean"
+              },
+              "tiktokPublic": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "drivePicker",
+              "billing",
+              "youtubePublic",
+              "tiktokPublic"
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "connections",
+          "media",
+          "posts",
+          "subscription",
+          "usage",
+          "capabilities"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "localSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "better-auth.session_token",
+        "description": "Local HTTP cookie set by Better Auth; do not construct manually."
+      },
+      "secureSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Secure-better-auth.session_token",
+        "description": "HTTPS cookie set by Better Auth."
+      },
+      "stripeSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Stripe-Signature",
+        "description": "Stripe timestamped HMAC over the exact raw body, not a static API token."
+      },
+      "mediaSignature": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "signature",
+        "description": "HMAC of destination ID and expires; accompanying expires is mandatory."
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Invalid input or invalid operation for current state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "No valid app session",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Invalid Origin or invalid media capability",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Owned resource not found or media unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Editing/cancellation/outcome conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "413": {
+        "description": "Application JSON body exceeds limit",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "416": {
+        "description": "Unsupported byte-range syntax; upstream range failures may instead map to 502",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Unexpected application or SDK error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "502": {
+        "description": "Provider request failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "503": {
+        "description": "Required configuration unavailable or live billing disabled",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

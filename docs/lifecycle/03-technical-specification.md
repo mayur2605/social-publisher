@@ -120,3 +120,7 @@ Quota reservation locks the subscription row. A unique usage destination prevent
 - Review pagination, API resource limits, accessibility, log redaction, and dependency security before broad registration.
 
 These are tracked in [phase 4](04-implementation-roadmap.md); their presence here is not a claim that they have been fixed.
+
+## Detailed contracts and assurance
+
+See [OpenAPI and auth boundary](../api/README.md), [product design](../design/product-design.md), [threat register](../security/threat-model.md), [dependency/build policy](../engineering/dependencies.md), and [cross-document audit](../documentation-audit.md). Browser-to-Drive resume currently depends on the active page's in-memory file/session references; the encrypted upload-session table has no owner-facing retrieval API. T037 tracks the product decision and any additional recovery implementation. T038 tracks auxiliary auth/upload records and vendor-route deletion review.

@@ -10,7 +10,7 @@ Deployment needs an authenticated Railway account and a project. No Railway cred
 6. Give only the web service a public domain. Set `BETTER_AUTH_URL` to its exact HTTPS origin on both services, and register all callback URLs with providers.
 7. Deploy the worker first so migrations complete, then deploy the web service. Never expose the database or worker publicly.
 8. Confirm `/api/health` reports `database: true, worker: true`. This endpoint is intentionally a whole-stack check; it should not gate initial web deployment while the worker is still starting.
-9. Test Google login and account linking on the final domain. Check private media streaming, HTTP ranges, large uploads, billing test checkout, and a scheduled post with the browser closed.
+9. Test Google login and dedicated publishing-account connections (implicit identity linking stays disabled) on the final domain. Check private media streaming, HTTP ranges, large uploads, billing test checkout, and a scheduled post with the browser closed.
 
 CLI equivalent after creating/linking services: authenticate with `railway login`, use `railway link`, select the relevant service, and deploy with `railway up`. The dashboard config-file paths must be configured per service; uploading the repository alone does not create all three services.
 
@@ -21,3 +21,7 @@ Keep code changes backwards compatible with existing stored job states. Pause di
 ## Storage and scaling
 
 There is no permanent video store. Browser-to-Drive uploads go directly to Google. Workers/gateway stream bounded chunks and byte ranges. The worker runs up to three jobs concurrently; tune concurrency against API limits, database pool capacity, and outbound bandwidth. Keep advisory locking in place when adding worker replicas. Exactly simultaneous public appearance on different platforms is not promised.
+
+## Acceptance record
+
+Complete the [staging gate](lifecycle/06-staging.md), record exact runtime/image versions under the [dependency policy](engineering/dependencies.md), and update the [release acceptance report](release/acceptance-report.md). Configuration files alone do not prove deployability, restore safety, or production acceptance.

@@ -4,6 +4,8 @@ A standalone creator workspace built with Next.js, TypeScript, Better Auth, Post
 
 ## Product and delivery documentation
 
+Use the [complete documentation index](docs/README.md) and [audit/traceability report](docs/documentation-audit.md) for architecture, design, API, security, dependency, and release evidence.
+
 Start with the [eight-phase lifecycle guide](docs/lifecycle/README.md): discovery, PRD, technical specification, implementation roadmap, validation, staging, launch, and production operations. It distinguishes implemented code and local test evidence from pending research, provider approvals, real-account testing, and deployment.
 
 The [feature specification](specs/001-social-publisher/spec.md), [implementation plan](specs/001-social-publisher/plan.md), [task register](specs/001-social-publisher/tasks.md), and [constitution](.specify/memory/constitution.md) provide Spec Kit-style planning artifacts. Specify CLI and agent workflow tooling have not been installed.
@@ -63,7 +65,7 @@ Postgres stores schedules in UTC, original timezones, and separate destination r
 
 YouTube resumable uploads query the received offset before the next chunk. TikTok upload acknowledgements and publish IDs are checkpointed. Instagram containers and Facebook video IDs are reconciled. An unknown outcome is held for attention rather than issuing another potentially duplicate publication. No distributed system can guarantee exactly-once side effects when a remote API does not expose an idempotency key or a recoverable ID; this app preserves uncertain jobs and their reserved quota for review.
 
-`Check status` retains the original remote operation and reconciles it. `Retry` after a confirmed platform failure may start a fresh operation. An unknown initialization with no recoverable platform ID requires checking the platform and intentionally creating another post. Confirmed successes are never automatically reposted.
+`Check status` retains the original remote operation and reconciles it. `Retry` after a confirmed platform failure may start a fresh operation. An unknown initialization with no recoverable platform ID requires inspecting the platform and using Review outcome before retrying or intentionally creating a new post. Confirmed successes are never automatically reposted.
 
 Deleting or changing a source video, revoking access, or exceeding a plan limit pauses work or marks it for attention. Reconnect/resolve the issue and retry the affected destination. Signing out does not stop background jobs. A request already accepted by a platform cannot be canceled from this app.
 

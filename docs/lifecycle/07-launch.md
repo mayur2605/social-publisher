@@ -62,3 +62,7 @@ Rollback code only when schema/job-state compatibility is known. Disable the aff
 For every release record: version/SHA, date, approver, supported scope, test evidence, provider approval references, business/payment mode, migrations, recovery evidence, known issues, and rollback target. Store secret-free operational evidence in the repo and sensitive provider/account evidence in restricted storage.
 
 Review the first week and first month for activation, reliability, cost, support load, and retention where real billing exists. Update the roadmap from observed results. Do not add excluded product areas merely to compensate for unresolved reliability or onboarding issues.
+
+## Current release records
+
+The [acceptance report](../release/acceptance-report.md) currently records NO-GO. Maintain the [provider approval register](../release/provider-approvals.md) and [policy decisions](../release/policy-decisions.md) as evidence is obtained. Use the [creator guide](../help/creator-guide.md) for onboarding, after verifying it against the accepted candidate.

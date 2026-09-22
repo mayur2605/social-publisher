@@ -47,3 +47,7 @@ Replace `https://publisher.example.com` with `BETTER_AUTH_URL`. Keep callback UR
 ## Before public registration
 
 Populate legal entity and support contact. Verify database backups and retention settings and reflect them in the privacy policy. Confirm platform approval scopes, quotas, policy pages, domain verification, TLS, and review videos. Run one real short-video and one supported long-video workflow on authorized test accounts, including a browser-closed schedule. Do not advertise these tests as passed until they have been performed using actual credentials.
+
+## Evidence ownership
+
+Record actual app scopes/access, approval decisions and restrictions in the [provider approval register](release/provider-approvals.md). This setup checklist is not proof of approval. Finalize operator/retention details through the [policy decision register](release/policy-decisions.md).

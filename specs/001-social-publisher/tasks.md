@@ -58,6 +58,16 @@ Checked tasks state only what is evidenced. Historical checks are not a claim th
 - [ ] T035 [Operations/support] Establish the phase 8 cadence, incident ownership, secret rotation, retention enforcement, and recurring restore evidence before public access.
 - [ ] T036 [Product] Review first-week/first-month reliability, onboarding, support, cost, and paid-retention evidence after release; prioritize follow-up work without silently expanding scope.
 
+## Documentation-audit follow-up
+
+- [ ] T037 [US2] Decide and implement/test resumable Drive upload recovery across navigation/reload if required; current UI resume only survives while its page-memory state remains. Engineering/product; FR-04, V-03/V-09.
+- [ ] T038 [US1/US5] Review enabled Better Auth endpoints and all capability/auxiliary records on disconnect/deletion; close any bypass or retention mismatch before final policy approval. Engineering; SEC-01/SEC-11, POL-04, V-01/V-08; complements T013/T020.
+- [ ] T039 [US3/US4] Assess creator-asserted outcome abuse/accounting, source revision races, provider redirect/host boundaries, and duplicate post submission after lost responses; add controls/tests where needed. Engineering; SEC-05/SEC-07/SEC-10; complements T014/T015/T019.
+- [ ] T040 [US2/US3] Validate design state coverage and resolve DST ambiguity/error rules in the UI; record keyboard, screen-reader, real-mobile and error-recovery evidence. Product/QA; complements T017/T026.
+- [ ] T041 [Engineering/operations] Complete target-runtime/container, package provenance/license, OS-image and dependency-update assurance beyond the zero-advisory npm snapshot. Depends on T018/T028; NFR-06/SEC-12.
+- [x] T042 [Documentation] Add API, threat, approval, release, help, policy, design, dependency and traceability records; audit first-party docs against source; check official GitHub Spec Kit guidance. Actual release acceptance remains incomplete.
+- [ ] T043 [Optional tooling] If adopting Specify CLI, use a reviewed baseline and bounded feature, preserve manual artifacts, review generated integration files, and record the installed version. This is not a production runtime prerequisite and was not performed by the documentation review.
+
 ## Completion evidence
 
 When checking an open task, append or link its commit, date, operator/role, test IDs, and evidence location. Sensitive provider approval/account artifacts belong in restricted storage; link a non-secret reference. Failed, blocked, deferred, or not-run tasks stay unchecked with an explanation. Installing Specify CLI/agent integrations is outside this documentation deliverable and must not be inferred from T002.

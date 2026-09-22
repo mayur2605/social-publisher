@@ -30,3 +30,7 @@ Logs intentionally exclude tokens, request bodies, upload URLs, and signed strea
 ## Maintenance
 
 Apply reviewed numbered migrations before deploying dependent code. Rotate tokens through reconnect flows; rotate app encryption keys only with a migration. Prune expired OAuth state and obsolete encrypted upload-session records periodically. Configure pg-boss retention according to operating needs. Keep database backups private and set documented retention. Monitor Stripe dashboard webhook delivery and replay failed events after fixing configuration.
+
+## Supporting controls
+
+Use the [production operating model](lifecycle/08-production-operations.md) for ownership and cadence, the [threat model](security/threat-model.md) for remaining assurance, and the [policy decisions](release/policy-decisions.md) for retention scope. No external alerts or cleanup schedules are created by these documents.

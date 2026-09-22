@@ -66,3 +66,7 @@ Test a representative multi-destination workload at configured concurrency three
 Critical defects include unauthorized data access, leaked grants, duplicate remote publication, and lost/corrupted billing state. Block release until fixed and retested. High defects block the affected advertised flow. Cosmetic defects may be deferred only with a recorded owner and impact. Each result is pass, fail, blocked, or not run; blocked is not pass.
 
 Evidence entry format: `test ID | requirement | commit | environment | date/operator | steps/data | expected | actual | result | evidence location | defect/follow-up`. QA signs acceptance evidence; engineering signs fixes and deployment reproducibility; product signs any explicitly limited pilot scope. See [launch](07-launch.md) for final release authorization.
+
+## Additional audit scenarios
+
+Include T037–T041: refresh/navigation during an interrupted Drive upload; enabled vendor auth routes including deletion; stale upload-session and auxiliary-auth retention; provider redirects/host validation; source revision between metadata check and transfer; duplicate create-post acknowledgement loss; creator outcome assertion abuse; and target Node/container compatibility. Requirement-quality checkboxes and a zero-advisory dependency report do not substitute for these executions.

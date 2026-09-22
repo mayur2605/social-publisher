@@ -26,3 +26,7 @@ Validated locally on 2026-09-22.
 `npm run setup:check` lists missing variable names without printing secrets. See provider-setup.md and deployment.md for the remaining external setup.
 
 Browser screenshots in the working copy's ignored `.local/` directory use test-only data and a small local video fixture. Tests run against a dedicated `_test` database and do not post to real social accounts.
+
+## Documentation and dependency review (2026-09-22)
+
+The [documentation audit](documentation-audit.md) checks first-party docs against application source and the original plan. An npm advisory query returned zero known advisories at review time; see [dependency policy](engineering/dependencies.md) for scope and limitations. This documentation review does not rerun or extend the historical 42 backend / 8 browser results above, and does not certify production readiness.

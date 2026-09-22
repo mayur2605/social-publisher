@@ -38,3 +38,7 @@ For future changes: describe the user outcome and acceptance first; update the t
 - [Recorded verification results and limitations](../verification.md)
 
 When code and desired behavior differ, record the difference in the roadmap and validation plan rather than silently treating the implementation as the requirement.
+
+## Supporting architecture and release assurance
+
+The [complete documentation index](../README.md) links the API contract, design specification, threat model, dependency policy, provider approvals, acceptance report, creator guide, policy decisions and [documentation audit](../documentation-audit.md). The [official Spec Kit alignment review](../spec-kit-review.md) records what was checked and why these manual artifacts are not an installed toolchain.

@@ -46,3 +46,7 @@ Baseline migrations are 000–003. New schema changes use new numbered files wit
 ## Open dependencies
 
 Provider credentials/test accounts, actual approval scopes, Railway access/domain, business identity/location, support coverage, retention policy, measured capacity, and payment eligibility are unresolved. They are not code placeholders: their owners and release consequences are tracked in the lifecycle roadmap and launch gate.
+
+## Supporting artifacts after documentation review
+
+Use the [API contract](../../docs/api/README.md), [UI design specification](../../docs/design/product-design.md), [threat model](../../docs/security/threat-model.md), [dependency policy](../../docs/engineering/dependencies.md), [requirement checklist](checklists/requirements.md), and [audit findings](../../docs/documentation-audit.md). Detailed data model and decisions remain in the technical specification/roadmap instead of duplicating independent versions. The [Spec Kit review](../../docs/spec-kit-review.md) describes manual alignment and the uninstalled toolchain.

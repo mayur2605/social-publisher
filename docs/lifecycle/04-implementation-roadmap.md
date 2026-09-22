@@ -81,3 +81,7 @@ Use focused branches and reviewable changes for remaining implementation. Record
 | Production capacity and service objectives          | Proposed | Measure during staging; accept before pilot                                    |
 
 Roadmap changes must retain evidence history and explain any deferred advertised feature. A subset pilot may proceed only with scope and access explicitly limited to what has passed validation.
+
+## Documentation audit additions
+
+Tasks T037–T041 cover upload resume across page lifetime, vendor-auth/auxiliary-record review, provider/source/outcome risks, UX/DST acceptance, and dependency/runtime assurance. They refine the existing hardening milestones rather than add new product scope. T042 records documentation work only; T043 is optional Spec Kit tool adoption. See the [audit matrix](../documentation-audit.md) for requirement-to-code-to-evidence mapping.

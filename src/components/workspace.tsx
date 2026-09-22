@@ -1061,7 +1061,14 @@ function Library({
       <div className="upload-zone">
         <UploadIcon width={32} height={32} />
         <h2>Give your next post a starting point</h2>
-        <p>MP4 or MOV, up to 2 GB. Originals stay in your Google Drive.</p>
+        <p>
+          MP4 or MOV, up to{" "}
+          {data.subscription &&
+          plans[data.subscription.plan]?.maxVideoBytes > 2 * 1024 ** 3
+            ? "10 GB"
+            : "2 GB"}
+          . Originals stay in your Google Drive.
+        </p>
         <div className="button-row">
           <Button
             onClick={() => input.current?.click()}
@@ -1851,6 +1858,11 @@ function Billing({ data }: { data: Data }) {
             </div>
             <p>{p.accounts} connected social accounts</p>
             <p>{p.posts} destination posts per month</p>
+            <p>
+              {p.maxVideoBytes > 2 * 1024 ** 3
+                ? "Up to 10 GB videos (YouTube & long-form)"
+                : "Up to 2 GB videos"}
+            </p>
             <p>Your own Google Drive storage</p>
             <p>All four publishing platforms</p>
             <Button

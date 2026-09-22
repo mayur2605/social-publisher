@@ -3,6 +3,16 @@ import { accessToken } from "./connections";
 import { json, request, bearer } from "./http";
 import { AppError, type Connection, type Media } from "./types";
 import { encrypt } from "./crypto";
+import { entitled, isPlan, plans } from "./plans";
+
+async function userMaxVideoBytes(userId: string): Promise<number> {
+  const [s] = await query<{ plan: string; status: string; period_end: Date }>(
+    "SELECT plan, status, period_end FROM subscriptions WHERE user_id=$1",
+    [userId],
+  );
+  const plan = s && entitled(s) && isPlan(s.plan) ? s.plan : "starter";
+  return plans[plan].maxVideoBytes;
+}
 export async function driveConnection(userId: string) {
   const [c] = await query<Connection>(
     "SELECT * FROM connections WHERE user_id=$1 AND platform='drive' AND status='connected' AND active=true",
@@ -22,13 +32,20 @@ export async function importFile(userId: string, id: string) {
   const f = await metadata(c, id);
   if (f.trashed || !f.capabilities?.canDownload)
     throw new AppError("This Drive file is not available for download.");
+  const maxBytes = await userMaxVideoBytes(userId);
   if (
     !["video/mp4", "video/quicktime"].includes(f.mimeType) ||
     !f.md5Checksum ||
     !Number(f.size) ||
-    Number(f.size) > 2 * 1024 ** 3
-  )
+    Number(f.size) > maxBytes
+  ) {
+    if (Number(f.size) > 2 * 1024 ** 3) {
+      throw new AppError(
+        "Videos over 2 GB require the Studio plan (up to 10 GB).",
+      );
+    }
     throw new AppError("Choose a ready-to-post MP4 or MOV video, up to 2 GB.");
+  }
   const v = f.videoMediaMetadata;
   if (!v?.durationMillis || !v.width || !v.height)
     throw new AppError(
@@ -57,12 +74,19 @@ export async function initiateUpload(
   mimeType: string,
   size: number,
 ) {
+  const maxBytes = await userMaxVideoBytes(userId);
   if (
     !["video/mp4", "video/quicktime"].includes(mimeType) ||
     size <= 0 ||
-    size > 2 * 1024 ** 3
-  )
+    size > maxBytes
+  ) {
+    if (size > 2 * 1024 ** 3) {
+      throw new AppError(
+        "Videos over 2 GB require the Studio plan (up to 10 GB).",
+      );
+    }
     throw new AppError("Use MP4 or MOV, up to 2 GB.");
+  }
   const c = await driveConnection(userId);
   const token = await accessToken(c);
   let folder = c.metadata.folderId;

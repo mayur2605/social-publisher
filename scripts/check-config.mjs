@@ -18,6 +18,7 @@ const groups = {
     "STRIPE_PRICE_STARTER",
     "STRIPE_PRICE_CREATOR",
     "STRIPE_PRICE_PRO",
+    "STRIPE_PRICE_STUDIO",
   ],
   "Public legal pages": ["LEGAL_ENTITY_NAME", "SUPPORT_EMAIL"],
 };

@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { query, tx } from "./db";
 import { appUrl, required } from "./env";
 import { AppError } from "./types";
-import { isPlan, type Plan } from "./plans";
+import { isPlan, plans, type Plan } from "./plans";
 export function stripe() {
   const key = required("STRIPE_SECRET_KEY");
   if (!key.startsWith("sk_test_"))
@@ -153,7 +153,7 @@ export async function webhook(body: string, signature: string) {
     )
       return;
     const item = s.items.data[0];
-    const plan = Object.keys({ starter: 1, creator: 1, pro: 1 }).find(
+    const plan = (Object.keys(plans) as Plan[]).find(
       (p) => process.env[`STRIPE_PRICE_${p.toUpperCase()}`] === item?.price.id,
     );
     if (!plan || !isPlan(plan))

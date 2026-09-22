@@ -58,6 +58,48 @@ describe("video and authorization safeguards", () => {
         "",
       ).join(),
     ).toContain("2 GB");
+    // Studio plan (up to 10 GB) allows 5 GB for YouTube, but platform limits still reject for Instagram and TikTok
+    const fiveGb = { ...media, size: String(5 * 1024 ** 3) };
+    expect(
+      validateMedia(
+        fiveGb,
+        "youtube",
+        { title: "Big 4K Video", privacy: "private", madeForKids: false },
+        "",
+        undefined,
+        10 * 1024 ** 3,
+      ),
+    ).toEqual([]);
+    expect(
+      validateMedia(
+        fiveGb,
+        "instagram",
+        {},
+        "",
+        undefined,
+        10 * 1024 ** 3,
+      ).join(),
+    ).toContain("1 GB");
+    expect(
+      validateMedia(
+        fiveGb,
+        "tiktok",
+        { privacy: "SELF_ONLY", consent: true },
+        "",
+        undefined,
+        10 * 1024 ** 3,
+      ).join(),
+    ).toContain("2 GB");
+    expect(
+      validateMedia(
+        { ...media, size: String(11 * 1024 ** 3) },
+        "youtube",
+        {},
+        "",
+        undefined,
+        10 * 1024 ** 3,
+      ).join(),
+    ).toContain("10 GB");
   });
   it("requires TikTok consent and respects live creator settings", () => {
     expect(

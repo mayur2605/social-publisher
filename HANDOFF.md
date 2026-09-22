@@ -125,6 +125,15 @@ Progress can be committed with the work; do not repeatedly commit just to update
 
 ## 11. Recent progress
 
+### 2026-09-22 — Antigravity / Gemini — Studio Plan & 10 GB Large Video Support
+
+- Introduced high-capacity **Studio Plan** ($79/month, 50 connected accounts, 1,500 posts/month, up to 10 GB video uploads) in `src/lib/plans.ts`.
+- Implemented plan-based `maxVideoBytes` entitlement enforcement in `src/lib/drive.ts` for direct Google Drive upload (`initiateUpload`) and Drive file import (`importFile`), providing clear upgrade messaging for sub-Studio subscribers.
+- Updated `src/lib/validation.ts` and `src/lib/publishers.ts` with destination-aware validation: unlocks 10 GB for YouTube and long-form Facebook Video while continuing to strictly enforce platform-mandated caps (1 GB on Instagram Reels, 1 GB on Facebook Reels, 2 GB on TikTok).
+- Enhanced UI in `src/components/workspace.tsx`: dynamically renders the Studio plan in the pricing grid and updates upload guidance to reflect the active subscriber's video size cap.
+- Updated Stripe webhook plan resolution in `src/lib/billing.ts` to dynamically match all defined plans in `plans.ts`.
+- Verified all 42 backend unit/integration tests (`npm test`), all 8 Playwright E2E browser tests (`npm run test:e2e`), TypeScript typecheck (`npm run typecheck`), ESLint (`npm run lint`), and Prettier formatting (`npm run format:check`).
+
 ### 2026-09-22 — Antigravity / Gemini — Local Development & Seed Session
 
 - Added `scripts/dev-session.ts` and `npm run dev:session` script to provision an offline local development session and sample workspace data in the local PostgreSQL database (`publisher`).

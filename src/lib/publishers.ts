@@ -492,6 +492,7 @@ export const adapters: Record<
           ctx.destination.options,
           ctx.caption,
           platform === "tiktok" ? await creatorInfo(ctx.connection) : undefined,
+          10 * 1024 ** 3,
         );
         if (
           platform === "tiktok" &&

@@ -40,13 +40,18 @@ export function validateMedia(
   options: Options,
   caption: string,
   creator?: Record<string, any>,
+  maxAllowedBytes: number = 2 * 1024 ** 3,
 ) {
   const errors: string[] = [];
   const bytes = Number(media.size);
   if (!["video/mp4", "video/quicktime"].includes(media.mime_type))
     errors.push("Use an MP4 or MOV video.");
-  if (!Number.isFinite(bytes) || bytes <= 0 || bytes > 2 * 1024 ** 3)
-    errors.push("The app accepts videos up to 2 GB.");
+  if (!Number.isFinite(bytes) || bytes <= 0 || bytes > maxAllowedBytes)
+    errors.push(
+      maxAllowedBytes > 2 * 1024 ** 3
+        ? "The app accepts videos up to 10 GB."
+        : "The app accepts videos up to 2 GB.",
+    );
   if (
     !Number.isFinite(media.duration) ||
     media.duration <= 0 ||
@@ -72,15 +77,22 @@ export function validateMedia(
     if ((options.description ?? caption).length > 2200)
       errors.push("Instagram captions must be at most 2,200 characters.");
   }
-  if (platform === "facebook" && options.format === "reel") {
-    if (media.duration < 3 || media.duration > 90)
-      errors.push(
-        "This Facebook Reels integration accepts 3–90 seconds; choose Video for longer content.",
-      );
-    if (media.height < media.width)
-      errors.push("Use a portrait video for Facebook Reels.");
+  if (platform === "facebook") {
+    if (options.format === "reel") {
+      if (bytes > 1024 ** 3)
+        errors.push(
+          "Facebook Reels must be at most 1 GB; choose Video for longer content.",
+        );
+      if (media.duration < 3 || media.duration > 90)
+        errors.push(
+          "This Facebook Reels integration accepts 3–90 seconds; choose Video for longer content.",
+        );
+      if (media.height < media.width)
+        errors.push("Use a portrait video for Facebook Reels.");
+    }
   }
   if (platform === "tiktok") {
+    if (bytes > 2 * 1024 ** 3) errors.push("TikTok accepts videos up to 2 GB.");
     if (!options.consent) errors.push("Agree to TikTok’s posting terms.");
     if (!options.privacy) errors.push("Choose TikTok privacy.");
     if ((options.description ?? caption).length > 2200)

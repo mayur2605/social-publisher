@@ -8,6 +8,8 @@ beforeAll(async () => {
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_unit";
   process.env.STRIPE_PRICE_STARTER = "price_starter";
   process.env.STRIPE_PRICE_CREATOR = "price_creator";
+  process.env.STRIPE_PRICE_PRO = "price_pro";
+  process.env.STRIPE_PRICE_STUDIO = "price_studio";
   await prepareDatabase();
 });
 afterAll(() => pool.end());
@@ -71,6 +73,19 @@ it("deduplicates signed events and handles upgrades, failed renewal and cancella
       ])
     )[0],
   ).toEqual({ plan: "creator", status: "active" });
+  active.items.data[0].price.id = "price_studio";
+  await deliver(
+    "evt_studio",
+    "customer.subscription.updated",
+    subscription("active", "price_studio"),
+  );
+  expect(
+    (
+      await query("SELECT plan,status FROM subscriptions WHERE user_id=$1", [
+        u.id,
+      ])
+    )[0],
+  ).toEqual({ plan: "studio", status: "active" });
   active.status = "past_due";
   await deliver("evt_due", "customer.subscription.updated", active);
   expect(

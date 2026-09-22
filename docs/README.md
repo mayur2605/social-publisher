@@ -2,6 +2,8 @@
 
 Social Publisher · Reviewed 2026-09-22
 
+For a new agent session or provider switch, read [AGENTS.md](../AGENTS.md) and the current [HANDOFF.md](../HANDOFF.md) first. HANDOFF is the shared progress/ownership checkpoint; the documents below remain the authoritative requirements and evidence.
+
 Start with the [audit and requirement traceability](documentation-audit.md) for current consistency findings and the [release acceptance report](release/acceptance-report.md) for readiness. The app is implemented locally; public production remains NO-GO pending external validation and the recorded engineering/business gates.
 
 ## Idea to production

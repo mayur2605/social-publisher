@@ -2,6 +2,8 @@
 
 A standalone creator workspace built with Next.js, TypeScript, Better Auth, PostgreSQL, and pg-boss. Source videos live in each creator's Google Drive. The app streams selected videos to YouTube, Instagram, Facebook, and TikTok and keeps durable, per-destination publishing state.
 
+**Continuing with any agent/provider:** start with [AGENTS.md](AGENTS.md) and the shared [HANDOFF.md](HANDOFF.md). They provide current progress, blockers, next tasks, and coordination rules; keep the handoff updated during work and before switching providers.
+
 ## Product and delivery documentation
 
 Use the [complete documentation index](docs/README.md) and [audit/traceability report](docs/documentation-audit.md) for architecture, design, API, security, dependency, and release evidence.

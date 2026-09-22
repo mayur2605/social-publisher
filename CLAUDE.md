@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Every session:** read [AGENTS.md](AGENTS.md) and [HANDOFF.md](HANDOFF.md) first. Keep HANDOFF updated after meaningful progress, verification, decisions, blockers, and before ending or switching agents/providers. Follow its ownership rules for parallel work; preserve other agents' changes. Do not rely on a previous chat to supply project context.
+
 ## Project Overview
 
 A Next.js social media publishing platform that schedules and publishes video content to multiple platforms (YouTube, Instagram, Facebook, TikTok). Uses Google Drive as the media source, Better Auth for authentication, PostgreSQL for data storage, pg-boss for background jobs, and Stripe for subscription billing.

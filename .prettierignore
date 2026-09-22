@@ -1,0 +1,13 @@
+node_modules
+.next
+.local
+.agents
+.remember
+.specify
+dist
+build
+out
+coverage
+test-results
+package-lock.json
+*.tsbuildinfo

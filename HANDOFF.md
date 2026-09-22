@@ -125,6 +125,14 @@ Progress can be committed with the work; do not repeatedly commit just to update
 
 ## 11. Recent progress
 
+### 2026-09-22 — Antigravity / Gemini — Tooling: Prettier & ESLint
+
+- Added ESLint 9 flat configuration (`eslint.config.mjs`) integrating `@next/eslint-plugin-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, and `eslint-config-prettier`.
+- Configured ESLint with `strict: 0` and compatible rule overrides for React 19 / Next.js 16.
+- Added `.prettierrc` matching repository formatting conventions and `.prettierignore` protecting Spec Kit vendor manifests (`.agents`, `.specify`) and internal cache directories (`.remember`).
+- Added package scripts: `npm run lint`, `npm run lint:fix`, `npm run format`, and `npm run format:check`. Updated `CLAUDE.md`.
+- Verification passed: `npm run lint` (0 errors), `npm run format:check` (all files formatted), `npm run typecheck` (clean), and `npm run build` (successful production build).
+
 ### 2026-09-22 — Codex / handoff setup — T044
 
 - Added shared HANDOFF and repository-wide AGENTS instructions, with entry links for Claude and the documentation indexes. Includes ownership, parallel-work and quota-interruption recovery protocols.

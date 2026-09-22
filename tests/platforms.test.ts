@@ -123,14 +123,12 @@ it("TikTok keeps a lost upload acknowledgement for review", async () => {
   const ctx = await context("tiktok");
   ctx.destination.remote_id = "tt-job";
   ctx.destination.upload_state = { sending: true, offset: 0 };
-  const fetcher = vi
-    .fn()
-    .mockResolvedValue(
-      Response.json({
-        data: { status: "PROCESSING_UPLOAD" },
-        error: { code: "ok" },
-      }),
-    );
+  const fetcher = vi.fn().mockResolvedValue(
+    Response.json({
+      data: { status: "PROCESSING_UPLOAD" },
+      error: { code: "ok" },
+    }),
+  );
   vi.stubGlobal("fetch", fetcher);
   expect((await adapters.tiktok.reconcile(ctx)).status).toBe("attention");
   expect(fetcher).toHaveBeenCalledTimes(1);

@@ -34,8 +34,12 @@ npm run build
 # Start production server (copies static assets into standalone output)
 npm start
 
-# Type checking
+# Type checking and linting
 npm run typecheck
+npm run lint                # Run ESLint check
+npm run lint:fix            # Automatically fix ESLint errors
+npm run format              # Format code with Prettier
+npm run format:check        # Check code formatting with Prettier
 
 # Tests (require TEST_DATABASE_URL pointing to a database ending in _test)
 npm test                    # Unit and integration tests
